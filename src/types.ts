@@ -902,7 +902,7 @@ export type Config = {
  *
  * @example
  * ```ts
- * import { defineScenario, type Step, type Config } from '@cut0/spec-snake';
+ * import { defineScenario, type Step, type Config } from 'spec-snake';
  *
  * const steps = [
  *   {
@@ -973,7 +973,7 @@ export function defineScenario<const TSteps extends readonly Step[]>(
  *
  * @example
  * ```ts
- * import { defineConfig, defineScenario } from '@cut0/spec-snake';
+ * import { defineConfig, defineScenario } from 'spec-snake';
  *
  * export default defineConfig({
  *   scenarios: [

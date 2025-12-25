@@ -2,7 +2,7 @@
   "mode": "pre",
   "tag": "beta",
   "initialVersions": {
-    "@cut0/spec-snake": "0.0.0"
+    "spec-snake": "0.0.0"
   },
   "changesets": ["great-laws-begin"]
 }

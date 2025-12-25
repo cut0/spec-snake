@@ -2,4 +2,4 @@
 "spec-snake": patch
 ---
 
-init
+fix: repo name

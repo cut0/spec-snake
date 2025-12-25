@@ -25,7 +25,7 @@ AI を活用した設計ドキュメントジェネレーター
 ## インストール
 
 ```bash
-pnpm add @cut0/spec-snake
+pnpm add spec-snake
 ```
 
 **Note**: GitHub Packages で公開されている
@@ -107,32 +107,37 @@ npx spec-snake-beta start --host 0.0.0.0
 ### 設定構造
 
 ```typescript
-import { defineConfig, defineScenario } from '@cut0/spec-snake';
+import { defineConfig, defineScenario } from "spec-snake";
 
 export default defineConfig({
   scenarios: [
     defineScenario({
-      id: 'design-doc',
-      name: '設計ドキュメント',
+      id: "design-doc",
+      name: "設計ドキュメント",
       steps: [
         {
-          slug: 'overview',
-          title: '概要',
-          description: 'プロジェクトの概要',
+          slug: "overview",
+          title: "概要",
+          description: "プロジェクトの概要",
           section: {
-            type: 'single',
-            name: 'overview',
+            type: "single",
+            name: "overview",
             fields: [
-              { id: 'title', type: 'input', label: 'タイトル', description: '' },
+              {
+                id: "title",
+                type: "input",
+                label: "タイトル",
+                description: "",
+              },
             ],
           },
         },
       ],
-      prompt: '...',
-      outputDir: 'docs',
+      prompt: "...",
+      outputDir: "docs",
       overrides: {
         filename: ({ formData, timestamp }) =>
-          `${formData.overview?.title ?? 'untitled'}-${timestamp}.md`,
+          `${formData.overview?.title ?? "untitled"}-${timestamp}.md`,
       },
     }),
   ],
