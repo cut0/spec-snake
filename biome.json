@@ -40,7 +40,8 @@
       ".tanstack/",
       "pnpm-lock.yaml",
       "src/client/locales/*.ts",
-      "src/client/routeTree.gen.ts"
+      "src/client/routeTree.gen.ts",
+      "package.json"
     ]
   },
   "overrides": []
