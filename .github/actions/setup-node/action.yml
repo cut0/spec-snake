@@ -1,0 +1,15 @@
+name: Setup Node.js
+description: Setup Node.js with version from .tool-versions
+
+runs:
+  using: composite
+  steps:
+    - name: Read Node.js version
+      id: node-version
+      shell: bash
+      run: echo "version=$(grep nodejs .tool-versions | cut -d' ' -f2)" >> $GITHUB_OUTPUT
+
+    - name: Setup Node.js
+      uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+      with:
+        node-version: ${{ steps.node-version.outputs.version }}
