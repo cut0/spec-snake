@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.2
+
+### Patch Changes
+
+- f5cd2c8: docs: add npm and yarn installation examples
+
 ## 0.0.1-beta.1
 
 ### Patch Changes
