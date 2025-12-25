@@ -27,7 +27,7 @@ Documents are managed based on three core concepts:
 ## Installation
 
 ```bash
-pnpm add @cut0/spec-snake
+pnpm add spec-snake
 ```
 
 **Note**: Published on GitHub Packages
@@ -109,32 +109,32 @@ Also refer to [src/types.ts](./src/types.ts) for configurable options.
 ### Config Structure
 
 ```typescript
-import { defineConfig, defineScenario } from '@cut0/spec-snake';
+import { defineConfig, defineScenario } from "spec-snake";
 
 export default defineConfig({
   scenarios: [
     defineScenario({
-      id: 'design-doc',
-      name: 'Design Document',
+      id: "design-doc",
+      name: "Design Document",
       steps: [
         {
-          slug: 'overview',
-          title: 'Overview',
-          description: 'Project overview',
+          slug: "overview",
+          title: "Overview",
+          description: "Project overview",
           section: {
-            type: 'single',
-            name: 'overview',
+            type: "single",
+            name: "overview",
             fields: [
-              { id: 'title', type: 'input', label: 'Title', description: '' },
+              { id: "title", type: "input", label: "Title", description: "" },
             ],
           },
         },
       ],
-      prompt: '...',
-      outputDir: 'docs',
+      prompt: "...",
+      outputDir: "docs",
       overrides: {
         filename: ({ formData, timestamp }) =>
-          `${formData.overview?.title ?? 'untitled'}-${timestamp}.md`,
+          `${formData.overview?.title ?? "untitled"}-${timestamp}.md`,
       },
     }),
   ],
@@ -155,31 +155,31 @@ export default defineConfig({
 
 **`Permissions`** - Permission settings
 
-| Property    | Type      | Description                    |
-| ----------- | --------- | ------------------------------ |
-| `allowSave` | `boolean` | Whether to allow saving docs   |
+| Property    | Type      | Description                  |
+| ----------- | --------- | ---------------------------- |
+| `allowSave` | `boolean` | Whether to allow saving docs |
 
 **`Scenario`** - Scenario definition. Each scenario represents one document type
 
-| Property     | Type                 | Required | Description                          |
-| ------------ | -------------------- | -------- | ------------------------------------ |
-| `id`         | `string`             | Yes      | Unique identifier used in URL        |
-| `name`       | `string`             | Yes      | Display name                         |
-| `steps`      | `Step[]`             | Yes      | Form wizard steps                    |
-| `prompt`     | `string \| Function` | Yes      | Prompt template sent to Claude       |
-| `outputDir`  | `string`             | No       | Directory for saving documents       |
-| `aiSettings` | `AiSettings`         | No       | Claude Agent SDK settings            |
-| `hooks`      | `ScenarioHooks`      | No       | Lifecycle hooks                      |
-| `overrides`  | `ScenarioOverrides`  | No       | Override default behaviors           |
+| Property     | Type                 | Required | Description                    |
+| ------------ | -------------------- | -------- | ------------------------------ |
+| `id`         | `string`             | Yes      | Unique identifier used in URL  |
+| `name`       | `string`             | Yes      | Display name                   |
+| `steps`      | `Step[]`             | Yes      | Form wizard steps              |
+| `prompt`     | `string \| Function` | Yes      | Prompt template sent to Claude |
+| `outputDir`  | `string`             | No       | Directory for saving documents |
+| `aiSettings` | `AiSettings`         | No       | Claude Agent SDK settings      |
+| `hooks`      | `ScenarioHooks`      | No       | Lifecycle hooks                |
+| `overrides`  | `ScenarioOverrides`  | No       | Override default behaviors     |
 
 **`Step`** - Each step in the multi-step form
 
-| Property      | Type      | Required | Description                        |
-| ------------- | --------- | -------- | ---------------------------------- |
-| `slug`        | `string`  | Yes      | URL-friendly identifier            |
-| `title`       | `string`  | Yes      | Title displayed in step header     |
-| `description` | `string`  | Yes      | Description shown below title      |
-| `section`     | `Section` | Yes      | Section containing step fields     |
+| Property      | Type      | Required | Description                    |
+| ------------- | --------- | -------- | ------------------------------ |
+| `slug`        | `string`  | Yes      | URL-friendly identifier        |
+| `title`       | `string`  | Yes      | Title displayed in step header |
+| `description` | `string`  | Yes      | Description shown below title  |
+| `section`     | `Section` | Yes      | Section containing step fields |
 
 ### `Section` - Two types available
 
@@ -262,18 +262,18 @@ ArraySection - A group of fields that can have multiple entries
 
 ### `AiSettings` - Claude Agent SDK settings
 
-| Property                          | Type                              | Description                                               |
-| --------------------------------- | --------------------------------- | --------------------------------------------------------- |
-| `model`                           | `string`                          | Model to use (e.g., `claude-sonnet-4-5-20250929`)         |
-| `fallbackModel`                   | `string`                          | Fallback model                                            |
-| `maxTurns`                        | `number`                          | Maximum turns                                             |
-| `maxBudgetUsd`                    | `number`                          | Budget limit in USD                                       |
+| Property                          | Type                              | Description                                                 |
+| --------------------------------- | --------------------------------- | ----------------------------------------------------------- |
+| `model`                           | `string`                          | Model to use (e.g., `claude-sonnet-4-5-20250929`)           |
+| `fallbackModel`                   | `string`                          | Fallback model                                              |
+| `maxTurns`                        | `number`                          | Maximum turns                                               |
+| `maxBudgetUsd`                    | `number`                          | Budget limit in USD                                         |
 | `tools`                           | `object`                          | Tool settings (`{ type: 'preset', preset: 'claude_code' }`) |
-| `allowedTools`                    | `string[]`                        | Allowed tools                                             |
-| `disallowedTools`                 | `string[]`                        | Disallowed tools                                          |
-| `permissionMode`                  | `PermissionMode`                  | Permission mode                                           |
-| `allowDangerouslySkipPermissions` | `boolean`                         | Skip permission checks                                    |
-| `mcpServers`                      | `Record<string, McpServerConfig>` | MCP server config                                         |
+| `allowedTools`                    | `string[]`                        | Allowed tools                                               |
+| `disallowedTools`                 | `string[]`                        | Disallowed tools                                            |
+| `permissionMode`                  | `PermissionMode`                  | Permission mode                                             |
+| `allowDangerouslySkipPermissions` | `boolean`                         | Skip permission checks                                      |
+| `mcpServers`                      | `Record<string, McpServerConfig>` | MCP server config                                           |
 
 #### Available Tools
 

@@ -1,5 +1,5 @@
 ---
-"@cut0/spec-snake": patch
+"spec-snake": patch
 ---
 
 init

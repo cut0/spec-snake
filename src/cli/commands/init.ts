@@ -7,7 +7,7 @@ import { consola } from 'consola';
 const CONFIG_TEMPLATE = `// For more detailed configuration examples, see:
 // https://github.com/cut0/spec-snake/blob/main/examples/spec-snake.ts
 
-import { defineConfig, defineScenario } from '@cut0/spec-snake';
+import { defineConfig, defineScenario } from 'spec-snake';
 
 export default defineConfig({
   scenarios: [

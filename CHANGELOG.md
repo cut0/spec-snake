@@ -1,4 +1,4 @@
-# @cut0/spec-snake
+# spec-snake
 
 ## 0.0.1-beta.0
 
