@@ -4,5 +4,10 @@
   "initialVersions": {
     "spec-snake": "0.0.0"
   },
-  "changesets": ["great-laws-begin"]
+  "changesets": [
+    "five-ravens-buy",
+    "great-laws-begin",
+    "rich-monkeys-drum",
+    "tidy-guests-happen"
+  ]
 }
