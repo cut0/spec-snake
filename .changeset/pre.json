@@ -5,6 +5,7 @@
     "spec-snake": "0.0.0"
   },
   "changesets": [
+    "eighty-cameras-invite",
     "five-ravens-buy",
     "great-laws-begin",
     "rich-monkeys-drum",
