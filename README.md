@@ -27,7 +27,14 @@ Documents are managed based on three core concepts:
 ## Installation
 
 ```bash
-pnpm add spec-snake
+# npm
+npm install spec-snake@beta
+
+# yarn
+yarn add spec-snake@beta
+
+# pnpm
+pnpm add spec-snake@beta
 ```
 
 **Note**: Published on GitHub Packages

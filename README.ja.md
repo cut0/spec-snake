@@ -25,7 +25,14 @@ AI を活用した設計ドキュメントジェネレーター
 ## インストール
 
 ```bash
-pnpm add spec-snake
+# npm
+npm install spec-snake@beta
+
+# yarn
+yarn add spec-snake@beta
+
+# pnpm
+pnpm add spec-snake@beta
 ```
 
 **Note**: GitHub Packages で公開されている
