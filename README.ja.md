@@ -35,8 +35,6 @@ yarn add spec-snake@beta
 pnpm add spec-snake@beta
 ```
 
-**Note**: GitHub Packages で公開されている
-
 ## 環境
 
 - **Node.js**: 18 以上

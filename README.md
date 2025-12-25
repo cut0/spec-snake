@@ -37,8 +37,6 @@ yarn add spec-snake@beta
 pnpm add spec-snake@beta
 ```
 
-**Note**: Published on GitHub Packages
-
 ## Requirements
 
 - **Node.js**: 18 or higher
