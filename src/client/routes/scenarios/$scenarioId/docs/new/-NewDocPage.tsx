@@ -239,7 +239,7 @@ export const NewDocPage = () => {
         <StepNavigation
           prev={prev}
           next={next}
-          onSubmit={next == null ? handleSubmit : undefined}
+          onSubmit={next == null ? handlePreview : undefined}
         />
       </main>
 

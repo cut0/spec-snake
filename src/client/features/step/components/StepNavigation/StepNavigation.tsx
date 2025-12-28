@@ -61,7 +61,7 @@ export const StepNavigation: FC<StepNavigationProps> = ({
         )}
         {onSubmit != null && (
           <Button variant="primary" onClick={handleSubmit}>
-            {t`Create`}
+            {t`Preview`}
           </Button>
         )}
       </div>

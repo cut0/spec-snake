@@ -251,7 +251,7 @@ export const EditDocPage = () => {
         <StepNavigation
           prev={prev}
           next={next}
-          onSubmit={next == null ? handleUpdate : undefined}
+          onSubmit={next == null ? handlePreview : undefined}
         />
       </main>
 
