@@ -1,0 +1,9 @@
+{
+  "name": "spec-snake-docker-sample",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "spec-snake": "beta"
+  }
+}

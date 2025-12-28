@@ -3,7 +3,7 @@ import {
   type Step,
   defineConfig,
   defineScenario,
-} from '../src/definitions';
+} from 'spec-snake';
 
 const priorityOptions: SelectOption[] = [
   { value: 'high', label: '高' },
@@ -205,8 +205,8 @@ const config = defineConfig({
         disallowedTools: ['Bash', 'Write', 'Edit'],
 
         // パーミッション設定
-        permissionMode: 'bypassPermissions',
-        allowDangerouslySkipPermissions: true,
+        permissionMode: 'dontAsk',
+        // allowDangerouslySkipPermissions: true,
 
         // MCP サーバー
         mcpServers: {
