@@ -1,0 +1,13 @@
+{
+  "name": "spec-snake-docker-sample",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "spec-snake start -c spec-snake.config.ts",
+    "start:ja": "spec-snake start -c spec-snake-ja.config.ts"
+  },
+  "dependencies": {
+    "spec-snake": "beta"
+  }
+}
