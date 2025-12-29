@@ -42,8 +42,8 @@ msgstr "Back"
 msgid "Back to Scenario List"
 msgstr "Back to Scenario List"
 
-#: src/client/components/Snackbar/Snackbar.tsx:60
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:48
+#: src/client/components/Snackbar/Snackbar.tsx:73
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:50
 msgid "Close"
 msgstr "Close"
 
@@ -56,17 +56,13 @@ msgstr "Close menu"
 msgid "Collapse sidebar"
 msgstr "Collapse sidebar"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:47
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:49
 msgid "Copied to clipboard"
 msgstr "Copied to clipboard"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:116
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:109
 msgid "Copy"
 msgstr "Copy"
-
-#: src/client/features/step/components/StepNavigation/StepNavigation.tsx:64
-msgid "Create"
-msgstr "Create"
 
 #: src/client/routes/scenarios/$scenarioId/-ScenarioModePage.tsx:55
 msgid "Create a new document from scratch"
@@ -100,11 +96,11 @@ msgstr "Expand sidebar"
 msgid "Failed to generate preview"
 msgstr "Failed to generate preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:156
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:160
 msgid "Generate preview"
 msgstr "Generate preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:42
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:44
 msgid "Generating..."
 msgstr "Generating..."
 
@@ -133,15 +129,16 @@ msgstr "Open menu"
 msgid "Please generate a preview"
 msgstr "Please generate a preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:153
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:157
 msgid "Press the button to generate a Design Doc preview"
 msgstr "Press the button to generate a Design Doc preview"
 
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:46
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:48
+#: src/client/features/step/components/StepNavigation/StepNavigation.tsx:64
 msgid "Preview"
 msgstr "Preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:98
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:100
 msgid "Regenerate"
 msgstr "Regenerate"
 
@@ -150,11 +147,11 @@ msgstr "Regenerate"
 msgid "Required fields are not filled"
 msgstr "Required fields are not filled"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:107
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:128
 msgid "Save"
 msgstr "Save"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:42
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:44
 msgid "Saving..."
 msgstr "Saving..."
 
@@ -166,7 +163,7 @@ msgstr "Scenario List"
 msgid "Select Document to Edit"
 msgstr "Select Document to Edit"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:125
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:118
 msgid "Share"
 msgstr "Share"
 
@@ -179,10 +176,10 @@ msgstr "Show preview"
 msgid "Step navigation"
 msgstr "Step navigation"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:89
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:91
 msgid "Switch to edit mode"
 msgstr "Switch to edit mode"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:88
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:90
 msgid "Switch to preview mode"
 msgstr "Switch to preview mode"
