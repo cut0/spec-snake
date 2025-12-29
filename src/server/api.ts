@@ -6,8 +6,16 @@ import { createDocsApp } from './apps/docs';
 import { createScenariosApp } from './apps/scenarios';
 import { buildSectionInfoMap } from './helpers/scenarios/build-section-info';
 
-export const createApiServer = (config: Config) => {
+export const createApiServer = (rawConfig: Config) => {
   const app = new Hono();
+
+  // In hosted mode, allowSave is always false
+  const config: Config = rawConfig.hosted
+    ? {
+        ...rawConfig,
+        permissions: { ...rawConfig.permissions, allowSave: false },
+      }
+    : rawConfig;
 
   // シナリオごとの情報を事前にビルド
   const scenarioInfoMap = new Map(

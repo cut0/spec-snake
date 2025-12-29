@@ -184,6 +184,7 @@ export const PermissionsSchema = v.object({
 export const ConfigSchema = v.object({
   scenarios: v.array(ScenarioSchema),
   permissions: PermissionsSchema,
+  hosted: v.optional(v.boolean(), false),
 });
 
 // =============================================================================

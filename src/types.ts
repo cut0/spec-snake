@@ -885,6 +885,8 @@ export type Config = {
   scenarios: Scenario[];
   /** Global permission settings */
   permissions: Permissions;
+  /** When true, runs in hosted mode where saving is disabled regardless of permissions.allowSave */
+  hosted?: boolean;
 };
 
 // =============================================================================
