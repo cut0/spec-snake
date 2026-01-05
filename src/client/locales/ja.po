@@ -42,8 +42,8 @@ msgstr "戻る"
 msgid "Back to Scenario List"
 msgstr "シナリオ一覧に戻る"
 
-#: src/client/components/Snackbar/Snackbar.tsx:60
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:48
+#: src/client/components/Snackbar/Snackbar.tsx:73
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:50
 msgid "Close"
 msgstr "閉じる"
 
@@ -56,17 +56,13 @@ msgstr "メニューを閉じる"
 msgid "Collapse sidebar"
 msgstr "サイドバーを折りたたむ"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:47
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:49
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:116
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:109
 msgid "Copy"
 msgstr "コピー"
-
-#: src/client/features/step/components/StepNavigation/StepNavigation.tsx:64
-msgid "Create"
-msgstr "作成"
 
 #: src/client/routes/scenarios/$scenarioId/-ScenarioModePage.tsx:55
 msgid "Create a new document from scratch"
@@ -100,11 +96,11 @@ msgstr "サイドバーを展開"
 msgid "Failed to generate preview"
 msgstr "プレビューの生成に失敗しました"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:156
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:160
 msgid "Generate preview"
 msgstr "プレビューを生成"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:42
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:44
 msgid "Generating..."
 msgstr "生成中..."
 
@@ -133,15 +129,16 @@ msgstr "メニューを開く"
 msgid "Please generate a preview"
 msgstr "プレビューを生成してください"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:153
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:157
 msgid "Press the button to generate a Design Doc preview"
 msgstr "ボタンを押すとDesign Docのプレビューが生成されます"
 
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:46
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:48
+#: src/client/features/step/components/StepNavigation/StepNavigation.tsx:64
 msgid "Preview"
 msgstr "プレビュー"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:98
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:100
 msgid "Regenerate"
 msgstr "再生成"
 
@@ -150,11 +147,11 @@ msgstr "再生成"
 msgid "Required fields are not filled"
 msgstr "必須項目が入力されていません"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:107
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:128
 msgid "Save"
 msgstr "保存"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:42
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:44
 msgid "Saving..."
 msgstr "保存中..."
 
@@ -166,7 +163,7 @@ msgstr "シナリオ一覧"
 msgid "Select Document to Edit"
 msgstr "編集するドキュメントを選択"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:125
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:118
 msgid "Share"
 msgstr "シェア"
 
@@ -179,10 +176,10 @@ msgstr "プレビューを表示"
 msgid "Step navigation"
 msgstr "ステップナビゲーション"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:89
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:91
 msgid "Switch to edit mode"
 msgstr "編集モードに切り替え"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:88
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:90
 msgid "Switch to preview mode"
 msgstr "プレビューモードに切り替え"
