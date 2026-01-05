@@ -167,7 +167,7 @@ export const ScenarioBaseSchema = v.object({
   id: v.string(),
   name: v.string(),
   steps: v.array(StepSchema),
-  prompt: v.string(),
+  prompt: v.unknown(),
   aiSettings: AiSettingsSchema,
 });
 
