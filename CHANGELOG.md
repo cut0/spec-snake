@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.3
+
+### Patch Changes
+
+- 9bf5019: fix: allow function type for prompt in schema validation
+
 ## 0.0.1-beta.2
 
 ### Patch Changes
