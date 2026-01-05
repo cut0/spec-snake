@@ -1,5 +1,15 @@
 # spec-snake
 
+## 0.0.1-beta.2
+
+### Patch Changes
+
+- 6fce870: chore: update CLI name and use dynamic version
+- e1a08da: docs: reorganize examples into local and docker setups
+- 9653888: fix: rename submit button from Create to Preview
+- f5cd2c8: docs: add npm and yarn installation examples
+- 37fbe8b: feat: add hosted mode to disable saving
+
 ## 0.0.1-beta.1
 
 ### Patch Changes
