@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.4
+
+### Patch Changes
+
+- 4a78bc5: feat: add SSE streaming for real-time preview generation
+
 ## 0.0.1-beta.3
 
 ### Patch Changes
