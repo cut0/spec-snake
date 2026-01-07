@@ -169,11 +169,16 @@ Generate a Markdown design document with:
 3. **Design**: (If Figma link provided) Describe the design based on Figma file analysis
 4. **Libraries**: (If libraries provided) Describe each library with searched information
 
+## Important Instructions
+
+- Output ONLY the design document content in Markdown format
+- Do NOT include any preamble, explanation, or commentary (e.g., "I'll generate...", "Let me fetch...", "Based on the input...", "I will generate the document...", "Let me retrieve the information...")
+- Start directly with the document title (# Title)
+- Do NOT wrap the output in code blocks
+
 ## Input Data
 
-{{INPUT_JSON}}
-
-Generate the design document based on the input above.`;
+{{INPUT_JSON}}`;
 
 // Use defineConfig and defineScenario for type-safe configuration
 const config = defineConfig({

@@ -40,8 +40,8 @@ export const PreviewContent: FC<PreviewContentProps> = ({
 }) => {
   const { t } = useLingui();
   const { showSnackbar } = useSnackbar();
-  const isLoading = isGenerating || isSubmitting;
-  const loadingMessage = isGenerating ? t`Generating...` : t`Saving...`;
+  const hasContent = previewContent != null && previewContent.length > 0;
+  const showOverlay = isSubmitting || (isGenerating && !hasContent);
 
   const handleCopy = useCallback(async () => {
     if (previewContent == null) return;
@@ -60,7 +60,7 @@ export const PreviewContent: FC<PreviewContentProps> = ({
   return (
     <div className="flex-1 overflow-y-auto p-6 relative">
       <AnimatePresence>
-        {isLoading && (
+        {showOverlay && (
           <motion.div
             className="absolute inset-0 bg-white/80 flex flex-col items-center justify-center gap-4 z-20"
             initial={{ opacity: 0 }}
@@ -77,7 +77,9 @@ export const PreviewContent: FC<PreviewContentProps> = ({
                 ease: 'linear',
               }}
             />
-            <p className="text-sm text-gray-500">{loadingMessage}</p>
+            <p className="text-sm text-gray-500">
+              {isSubmitting ? t`Saving...` : t`Generating...`}
+            </p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -99,7 +101,7 @@ export const PreviewContent: FC<PreviewContentProps> = ({
           <button
             aria-label={t`Regenerate`}
             className="p-2.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed *:size-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:ring-offset-2"
-            disabled={isLoading}
+            disabled={isGenerating || isSubmitting}
             type="button"
             onClick={onPreview}
           >
@@ -127,7 +129,7 @@ export const PreviewContent: FC<PreviewContentProps> = ({
             <button
               aria-label={t`Save`}
               className="p-2.5 rounded-lg text-gray-500 hover:text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed *:size-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:ring-offset-2"
-              disabled={isLoading}
+              disabled={isGenerating || isSubmitting}
               type="button"
               onClick={onCreate}
             >
@@ -148,10 +150,21 @@ export const PreviewContent: FC<PreviewContentProps> = ({
       {previewContent != null && previewMode === 'preview' && (
         <div className="prose prose-sm prose-gray max-w-none">
           <Markdown remarkPlugins={[remarkGfm]}>{previewContent}</Markdown>
+          {isGenerating && (
+            <motion.span
+              className="inline-block w-2 h-4 bg-indigo-500 ml-1 align-middle"
+              animate={{ opacity: [1, 0] }}
+              transition={{
+                duration: 0.5,
+                repeat: Number.POSITIVE_INFINITY,
+                repeatType: 'reverse',
+              }}
+            />
+          )}
         </div>
       )}
 
-      {previewContent == null && !isLoading && (
+      {previewContent == null && !isGenerating && !isSubmitting && (
         <div className="flex flex-col items-center justify-center h-full text-center gap-4">
           <p className="text-gray-400 text-sm whitespace-pre-line">
             {t`Press the button to generate a Design Doc preview`}

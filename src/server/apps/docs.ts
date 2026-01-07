@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { createMiddleware } from 'hono/factory';
+import { streamSSE } from 'hono/streaming';
 
 import type { Config } from '../../definitions';
 import { transformFormData } from '../helpers/docs/transform';
@@ -9,7 +10,7 @@ import {
   readDocument,
   saveDocument,
 } from '../repositories/document';
-import { generateDesignDoc } from '../usecases/docs/generate-doc';
+import { generateDesignDocStream } from '../usecases/docs/generate-doc';
 
 import type { ScenarioInfoMapEntry } from './scenarios';
 
@@ -70,13 +71,35 @@ export const createDocsApp = (
 
     const formData = (await c.req.json()) as Record<string, unknown>;
     const inputData = transformFormData(formData, sectionInfoMap);
-    const content = await generateDesignDoc({ scenario, formData, inputData });
 
-    if (scenario.hooks?.onPreview != null) {
-      await scenario.hooks.onPreview({ formData, inputData, content });
-    }
+    return streamSSE(c, async (stream) => {
+      let fullContent = '';
 
-    return c.json({ success: true, content });
+      for await (const chunk of generateDesignDocStream({
+        scenario,
+        formData,
+        inputData,
+      })) {
+        fullContent += chunk.text;
+        await stream.writeSSE({
+          data: JSON.stringify({ type: 'text_delta', text: chunk.text }),
+          event: 'message',
+        });
+      }
+
+      await stream.writeSSE({
+        data: JSON.stringify({ type: 'done', content: fullContent }),
+        event: 'message',
+      });
+
+      if (scenario.hooks?.onPreview != null) {
+        await scenario.hooks.onPreview({
+          formData,
+          inputData,
+          content: fullContent,
+        });
+      }
+    });
   });
 
   app.post('/api/scenarios/:scenarioId/docs', async (c) => {
