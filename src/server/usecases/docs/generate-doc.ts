@@ -43,3 +43,45 @@ export const generateDesignDoc = async ({
 
   return message.result;
 };
+
+type StreamChunk = {
+  type: 'text_delta';
+  text: string;
+};
+
+export async function* generateDesignDocStream({
+  scenario,
+  formData,
+  inputData,
+}: GenerateDesignDocParams): AsyncGenerator<StreamChunk> {
+  const promptTemplate =
+    typeof scenario.prompt === 'function'
+      ? scenario.prompt({ formData, inputData })
+      : scenario.prompt;
+  const prompt = promptTemplate.replace(
+    '{{INPUT_JSON}}',
+    JSON.stringify(inputData, null, 2),
+  );
+
+  for await (const msg of query({
+    prompt,
+    options: {
+      ...(scenario.aiSettings as Options),
+      includePartialMessages: true,
+    },
+  })) {
+    if (msg.type === 'stream_event') {
+      const event = msg.event as {
+        type: string;
+        delta?: { type: string; text?: string };
+      };
+      if (
+        event.type === 'content_block_delta' &&
+        event.delta?.type === 'text_delta' &&
+        event.delta.text != null
+      ) {
+        yield { type: 'text_delta', text: event.delta.text };
+      }
+    }
+  }
+}
