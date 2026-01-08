@@ -392,20 +392,17 @@ filename: ({ formData, timestamp }) =>
 
 ### プロンプト関数
 
-プロンプトは `formData` と `promptContext` パラメータを受け取る関数として定義します。
+プロンプトは `formData` と `aiContext` パラメータを受け取る関数として定義します。
 
 ```typescript
-const prompt = ({
-  formData,
-  promptContext,
-}) => `設計ドキュメントを生成してください。
+const prompt = ({ formData, aiContext }) => `設計ドキュメントを生成してください。
 
-${JSON.stringify(promptContext, null, 2)}`;
+${JSON.stringify({ formData, aiContext }, null, 2)}`;
 ```
 
 #### `formData`
 
-UI からの生のフォームデータ。セクション名でキー付けされています。特定のフィールド値に直接アクセスする場合に便利です。
+UI からの生のフォームデータ。ステップ名でキー付けされています。ユーザーが入力した実際の値が含まれます。
 
 ```typescript
 // formData の構造例
@@ -415,67 +412,51 @@ UI からの生のフォームデータ。セクション名でキー付けさ�
     description: "プロジェクトの説明",
     priority: "high"
   },
-  requirements: [
-    { name: "機能A", priority: "high" },
-    { name: "機能B", priority: "medium" }
-  ]
+  modules: {
+    items: [
+      {
+        name: "認証モジュール",
+        features: [
+          { feature_name: "ログイン", feature_description: "ユーザーログイン" }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-使用例:
+#### `aiContext`
+
+ステップごとに整理されたフィールドのメタデータ（ラベル、説明）。値を重複させずに AI が構造を理解するのに役立ちます。
 
 ```typescript
-const prompt = ({ formData }) =>
-  `${formData.overview?.title} の ${formData.overview?.priority} 優先度ドキュメントを生成。`;
-```
-
-#### `promptContext`
-
-ステップ/フィールドのメタデータを含む変換済みフォームデータ。ラベルや説明が含まれており、AI プロンプトに適しています。
-
-```typescript
-// promptContext の構造例
+// aiContext の構造例
 {
-  steps: [
-    {
-      title: "概要",
-      description: "プロジェクトの概要",
-      fields: [
-        {
-          label: "タイトル",
-          description: "プロジェクト名",
-          value: "マイプロジェクト",
-        },
-        { label: "説明", description: "プロジェクトの説明", value: "..." },
-        { label: "優先度", description: "優先度レベル", value: "high" },
-      ],
-    },
-    {
-      title: "要件",
-      description: "要件一覧",
-      fields: [
-        [
-          { label: "名前", description: "要件名", value: "機能A" },
-          { label: "優先度", description: "優先度", value: "high" },
-        ],
-        [
-          { label: "名前", description: "要件名", value: "機能B" },
-          { label: "優先度", description: "優先度", value: "medium" },
-        ],
-      ],
-    },
-  ];
+  overview: {
+    _step: { title: "概要", description: "プロジェクトの概要" },
+    title: { label: "タイトル", description: "プロジェクト名" },
+    description: { label: "説明", description: "プロジェクトの説明" },
+    priority: { label: "優先度", description: "優先度レベル" }
+  },
+  modules: {
+    _step: { title: "モジュール", description: "モジュール構成" },
+    items: {
+      name: { label: "モジュール名", description: "モジュールの名前" },
+      features: {
+        feature_name: { label: "機能名", description: "機能の名前" },
+        feature_description: { label: "機能説明", description: "機能の詳細" }
+      }
+    }
+  }
 }
 ```
 
 使用例:
 
 ```typescript
-const prompt = ({
-  promptContext,
-}) => `以下の入力に基づいて設計ドキュメントを生成:
+const prompt = ({ formData, aiContext }) => `以下の入力に基づいて設計ドキュメントを生成:
 
-${JSON.stringify(promptContext, null, 2)}`;
+${JSON.stringify({ formData, aiContext }, null, 2)}`;
 ```
 
 ## ライセンス

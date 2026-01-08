@@ -1,85 +1,145 @@
-import type { PromptContext } from '../../../definitions';
-import type { StepInfo } from '../scenarios/build-step-info';
+import type {
+  AiContext,
+  AiContextFieldMeta,
+  AiContextRepeatable,
+  AiContextStep,
+  Field,
+  Step,
+} from '../../../definitions';
 
-type FieldTransformed = {
-  label: string;
-  description: string;
-  value: unknown;
+/**
+ * Build field metadata for aiContext from a field
+ * Handles nested structures (repeatable > group > repeatable)
+ */
+const buildFieldMeta = (
+  field: Field,
+): AiContextFieldMeta | AiContextRepeatable | null => {
+  switch (field.type) {
+    case 'input':
+    case 'textarea':
+    case 'select':
+    case 'checkbox':
+      return {
+        label: field.label,
+        description: field.description,
+      };
+
+    case 'grid':
+      // Grid is a visual layout, flatten its fields
+      return buildFieldsMeta(field.fields);
+
+    case 'repeatable': {
+      const innerField = field.field;
+      if (innerField.type === 'group') {
+        // repeatable > group: build nested structure
+        return buildFieldsMeta(innerField.fields);
+      }
+      // repeatable > single field
+      const meta = buildFieldMeta(innerField);
+      if (meta != null && 'label' in meta) {
+        return { [innerField.id]: meta };
+      }
+      return meta;
+    }
+
+    case 'group':
+      // Group without repeatable parent (visual grouping)
+      return buildFieldsMeta(field.fields);
+
+    default:
+      return null;
+  }
 };
 
 /**
- * Transform a step's form value to an array of field objects
- * Handles nested structures from repeatable and group layouts
+ * Build field metadata object from an array of fields
  */
-const transformStepValue = (
-  stepValue: unknown,
-  fieldInfoMap: Map<string, { label: string; description: string }>,
-): FieldTransformed[] => {
-  if (stepValue == null) {
-    return [];
-  }
+const buildFieldsMeta = (
+  fields: readonly Field[],
+): AiContextRepeatable | null => {
+  const result: AiContextRepeatable = {};
 
-  const values = stepValue as Record<string, unknown>;
-  const result: FieldTransformed[] = [];
-
-  for (const [fieldId, fieldValue] of Object.entries(values)) {
-    const fieldInfo = fieldInfoMap.get(fieldId);
-
-    if (fieldInfo) {
-      // Direct field value
-      result.push({
-        label: fieldInfo.label,
-        description: fieldInfo.description,
-        value: fieldValue,
-      });
-    } else if (Array.isArray(fieldValue)) {
-      // Repeatable layout: array of objects
-      result.push({
-        label: fieldId,
-        description: '',
-        value: fieldValue.map((v: Record<string, unknown>) =>
-          Object.fromEntries(
-            Object.entries(v).map(([k, val]) => {
-              const info = fieldInfoMap.get(k);
-              return [info?.label ?? k, val];
-            }),
-          ),
-        ),
-      });
-    }
-  }
-
-  return result;
-};
-
-export const transformFormData = (
-  body: Record<string, unknown>,
-  stepInfoMap: Map<string, StepInfo>,
-): PromptContext => {
-  const steps: PromptContext['steps'] = [];
-
-  for (const [stepName, stepValue] of Object.entries(body)) {
-    const stepInfo = stepInfoMap.get(stepName);
-
-    if (stepInfo == null) {
+  for (const field of fields) {
+    // Layout fields (grid, group) don't have id, process their children
+    if (field.type === 'grid') {
+      const gridMeta = buildFieldsMeta(field.fields);
+      if (gridMeta != null) {
+        Object.assign(result, gridMeta);
+      }
       continue;
     }
 
-    const fieldInfoMap = new Map(
-      stepInfo.fields.map((f) => [
-        f.id,
-        { label: f.label, description: f.description },
-      ]),
-    );
+    if (field.type === 'group') {
+      const groupMeta = buildFieldsMeta(field.fields);
+      if (groupMeta != null) {
+        Object.assign(result, groupMeta);
+      }
+      continue;
+    }
 
-    const fields = transformStepValue(stepValue, fieldInfoMap);
+    if (field.type === 'repeatable') {
+      const meta = buildFieldMeta(field);
+      if (meta != null) {
+        result[field.id] = meta;
+      }
+      continue;
+    }
 
-    steps.push({
-      title: stepInfo.title,
-      description: stepInfo.description,
-      fields,
-    });
+    // Form fields have id
+    const meta = buildFieldMeta(field);
+    if (meta != null) {
+      result[field.id] = meta;
+    }
   }
 
-  return { steps };
+  return Object.keys(result).length > 0 ? result : null;
+};
+
+/**
+ * Build AiContext from steps
+ *
+ * Creates a metadata structure that helps AI understand form fields.
+ * Contains labels and descriptions for each field, organized by step name.
+ *
+ * @example
+ * ```ts
+ * // Input: steps with nested repeatable fields
+ * // Output:
+ * {
+ *   overview: {
+ *     _step: { title: "Overview", description: "Basic info" },
+ *     title: { label: "Title", description: "Feature title" }
+ *   },
+ *   modules: {
+ *     _step: { title: "Modules", description: "Module structure" },
+ *     items: {
+ *       name: { label: "Module Name", description: "..." },
+ *       features: {
+ *         feature_name: { label: "Feature Name", description: "..." }
+ *       }
+ *     }
+ *   }
+ * }
+ * ```
+ */
+export const buildAiContext = (steps: Step[]): AiContext => {
+  const result: AiContext = {};
+
+  for (const step of steps) {
+    const stepContext: AiContextStep = {
+      _step: {
+        title: step.title,
+        description: step.description,
+      },
+    };
+
+    const fieldsMeta = buildFieldsMeta(step.fields);
+    if (fieldsMeta != null) {
+      Object.assign(stepContext, fieldsMeta);
+    }
+
+    result[step.name] = stepContext;
+  }
+
+  return result;
 };

@@ -206,14 +206,14 @@ const steps = [
 ] as const satisfies Step[];
 
 const prompt = ({
-  promptContext,
+  aiContext,
   formData,
 }: {
-  promptContext: unknown;
+  aiContext: unknown;
   formData: unknown;
 }) => {
   console.log(JSON.stringify(formData, null, 2));
-  console.log(JSON.stringify(promptContext, null, 2));
+  console.log(JSON.stringify(aiContext, null, 2));
   return `あなたはテクニカルライターアシスタントです。以下の入力に基づいて設計ドキュメントを生成してください。
 
 ## 入力データ構造
@@ -272,7 +272,7 @@ const prompt = ({
 
 ## 入力データ
 
-${JSON.stringify(promptContext, null, 2)}
+${JSON.stringify(aiContext, null, 2)}
 
 上記の入力に基づいて設計ドキュメントを生成してください。`;
 };

@@ -389,17 +389,17 @@ filename: ({ formData, timestamp }) =>
 
 ### Prompt Function
 
-Prompts are defined as functions that receive `formData` and `promptContext` parameters.
+Prompts are defined as functions that receive `formData` and `aiContext` parameters.
 
 ```typescript
-const prompt = ({ formData, promptContext }) => `Generate a design document.
+const prompt = ({ formData, aiContext }) => `Generate a design document.
 
-${JSON.stringify(promptContext, null, 2)}`;
+${JSON.stringify({ formData, aiContext }, null, 2)}`;
 ```
 
 #### `formData`
 
-Raw form data from UI, keyed by section name. Useful for accessing specific field values directly.
+Raw form data from UI, keyed by step name. Contains actual values entered by user.
 
 ```typescript
 // Example formData structure
@@ -409,61 +409,51 @@ Raw form data from UI, keyed by section name. Useful for accessing specific fiel
     description: "Project description",
     priority: "high"
   },
-  requirements: [
-    { name: "Feature A", priority: "high" },
-    { name: "Feature B", priority: "medium" }
-  ]
-}
-```
-
-Usage example:
-
-```typescript
-const prompt = ({ formData }) =>
-  `Generate a ${formData.overview?.priority} priority document for ${formData.overview?.title}.`;
-```
-
-#### `promptContext`
-
-Transformed form data with step/field metadata. Includes labels and descriptions, suitable for AI prompts.
-
-```typescript
-// Example promptContext structure
-{
-  steps: [
-    {
-      title: "Overview",
-      description: "Project overview",
-      fields: [
-        { label: "Title", description: "Project title", value: "My Project" },
-        { label: "Description", description: "Project description", value: "..." },
-        { label: "Priority", description: "Priority level", value: "high" }
-      ]
-    },
-    {
-      title: "Requirements",
-      description: "List requirements",
-      fields: [
-        [
-          { label: "Name", description: "Requirement name", value: "Feature A" },
-          { label: "Priority", description: "Priority", value: "high" }
-        ],
-        [
-          { label: "Name", description: "Requirement name", value: "Feature B" },
-          { label: "Priority", description: "Priority", value: "medium" }
+  modules: {
+    items: [
+      {
+        name: "Auth Module",
+        features: [
+          { feature_name: "Login", feature_description: "User login" }
         ]
-      ]
+      }
+    ]
+  }
+}
+```
+
+#### `aiContext`
+
+Field metadata (labels, descriptions) organized by step. Helps AI understand the structure without duplicating values.
+
+```typescript
+// Example aiContext structure
+{
+  overview: {
+    _step: { title: "Overview", description: "Project overview" },
+    title: { label: "Title", description: "Project title" },
+    description: { label: "Description", description: "Project description" },
+    priority: { label: "Priority", description: "Priority level" }
+  },
+  modules: {
+    _step: { title: "Modules", description: "Module structure" },
+    items: {
+      name: { label: "Module Name", description: "Name of the module" },
+      features: {
+        feature_name: { label: "Feature Name", description: "Name of feature" },
+        feature_description: { label: "Feature Description", description: "Feature details" }
+      }
     }
-  ]
+  }
 }
 ```
 
 Usage example:
 
 ```typescript
-const prompt = ({ promptContext }) => `Generate a design document based on:
+const prompt = ({ formData, aiContext }) => `Generate a design document based on:
 
-${JSON.stringify(promptContext, null, 2)}`;
+${JSON.stringify({ formData, aiContext }, null, 2)}`;
 ```
 
 ## License

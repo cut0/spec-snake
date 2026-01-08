@@ -53,8 +53,8 @@ export default defineConfig({
         },
       ],
       filename: ({ timestamp }) => \`\${timestamp}.md\`,
-      prompt: ({ promptContext }) =>
-        \`Generate a design doc based on the following input:\n\${JSON.stringify(promptContext, null, 2)}\`,
+      prompt: ({ formData, aiContext }) =>
+        \`Generate a design doc based on the following input:\n\${JSON.stringify({ formData, aiContext }, null, 2)}\`,
     }),
   ],
   permissions: {

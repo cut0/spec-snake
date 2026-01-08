@@ -90,7 +90,7 @@ pnpm release                        # Changesets publish
 - `defineScenario()` and `defineConfig()` helpers for type-safe configuration
 - `onPreview`/`onSave` hooks for custom behavior
 - `filename` for custom document naming
-- Prompt is a function receiving `{ formData, promptContext }` parameters
+- Prompt is a function receiving `{ formData, aiContext }` parameters
 - `InferFormDataFromSteps<T>` utility type for type-safe formData access
 
 **Field Types**:

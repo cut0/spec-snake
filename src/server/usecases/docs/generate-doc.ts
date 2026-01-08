@@ -4,20 +4,20 @@ import {
   query,
 } from '@anthropic-ai/claude-agent-sdk';
 
-import type { PromptContext, Scenario } from '../../../definitions';
+import type { AiContext, Scenario } from '../../../definitions';
 
 type GenerateDesignDocParams = {
   scenario: Scenario;
   formData: Record<string, unknown>;
-  promptContext: PromptContext;
+  aiContext: AiContext;
 };
 
 export const generateDesignDoc = async ({
   scenario,
   formData,
-  promptContext,
+  aiContext,
 }: GenerateDesignDocParams): Promise<string> => {
-  const prompt = scenario.prompt({ formData, promptContext });
+  const prompt = scenario.prompt({ formData, aiContext });
 
   let message: SDKResultMessage | null = null;
 
@@ -45,9 +45,9 @@ type StreamChunk = {
 export async function* generateDesignDocStream({
   scenario,
   formData,
-  promptContext,
+  aiContext,
 }: GenerateDesignDocParams): AsyncGenerator<StreamChunk> {
-  const prompt = scenario.prompt({ formData, promptContext });
+  const prompt = scenario.prompt({ formData, aiContext });
 
   for await (const msg of query({
     prompt,

@@ -206,9 +206,9 @@ const steps = [
 ] as const satisfies Step[];
 
 const prompt = ({
-  promptContext,
+  aiContext,
 }: {
-  promptContext: unknown;
+  aiContext: unknown;
 }) => `You are a technical writer assistant. Generate a design document based on the following input.
 
 ## Input Data Structure
@@ -274,7 +274,7 @@ Generate a Markdown design document with:
 
 ## Input Data
 
-${JSON.stringify(promptContext, null, 2)}`;
+${JSON.stringify(aiContext, null, 2)}`;
 
 // Use defineConfig and defineScenario for type-safe configuration
 const config = defineConfig({

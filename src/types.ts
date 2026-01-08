@@ -597,16 +597,67 @@ export type ScenarioBase = {
 };
 
 /**
- * PromptContext type (transformed form data sent to Claude)
- *
- * This is the structure of `promptContext` passed to hooks, prompts, and filename.
+ * Step metadata in AiContext
  */
-export type PromptContext = {
-  steps: Array<{
-    title: string;
-    description: string;
-    fields: Array<{ label: string; description: string; value: unknown }>;
-  }>;
+export type AiContextStepMeta = {
+  title: string;
+  description: string;
+};
+
+/**
+ * Field metadata in AiContext
+ */
+export type AiContextFieldMeta = {
+  label: string;
+  description: string;
+};
+
+/**
+ * AiContext for a repeatable field (nested structure)
+ */
+export type AiContextRepeatable = {
+  [fieldId: string]: AiContextFieldMeta | AiContextRepeatable;
+};
+
+/**
+ * AiContext for a step
+ */
+export type AiContextStep = {
+  _step: AiContextStepMeta;
+  [fieldId: string]:
+    | AiContextStepMeta
+    | AiContextFieldMeta
+    | AiContextRepeatable;
+};
+
+/**
+ * AiContext type - metadata for form fields to help AI understand the data
+ *
+ * This is included in formData as `ai_context` property.
+ * Contains labels and descriptions for each field, organized by step name.
+ *
+ * @example
+ * ```ts
+ * {
+ *   overview: {
+ *     _step: { title: "Overview", description: "Basic information" },
+ *     title: { label: "Title", description: "Feature title" },
+ *     priority: { label: "Priority", description: "Priority level" }
+ *   },
+ *   modules: {
+ *     _step: { title: "Modules", description: "Module structure" },
+ *     items: {
+ *       name: { label: "Module Name", description: "Name of the module" },
+ *       features: {
+ *         feature_name: { label: "Feature Name", description: "Name of feature" }
+ *       }
+ *     }
+ *   }
+ * }
+ * ```
+ */
+export type AiContext = {
+  [stepName: string]: AiContextStep;
 };
 
 /**
@@ -625,12 +676,12 @@ export type ScenarioHooks<
    * Use for logging, analytics, or transforming the preview content.
    *
    * @param params.formData - The raw form data from the UI
-   * @param params.promptContext - The transformed data sent to Claude
+   * @param params.aiContext - Field metadata (labels, descriptions) for AI
    * @param params.content - The generated markdown content
    */
   onPreview?: (params: {
     formData: TFormData;
-    promptContext: PromptContext;
+    aiContext: AiContext;
     content: string;
   }) => Promise<void>;
 
@@ -643,14 +694,14 @@ export type ScenarioHooks<
    * @param params.filename - The filename that was used
    * @param params.outputPath - Full path to the saved file
    * @param params.formData - The raw form data from the UI
-   * @param params.promptContext - The transformed data sent to Claude
+   * @param params.aiContext - Field metadata (labels, descriptions) for AI
    */
   onSave?: (params: {
     content: string;
     filename: string;
     outputPath: string;
     formData: TFormData;
-    promptContext: PromptContext;
+    aiContext: AiContext;
   }) => Promise<void>;
 };
 
@@ -681,26 +732,26 @@ export type ScenarioFilename<
       timestamp: string;
       content: string;
       formData: TFormData;
-      promptContext: PromptContext;
+      aiContext: AiContext;
     }) => string);
 
 /**
  * Prompt function type
  *
  * A function that generates the prompt string.
- * Use `promptContext` parameter directly to include form data in the prompt.
+ * Use `formData` for raw values and `aiContext` for field metadata.
  *
  * @typeParam TFormData - Type of the raw form data from UI
  *
  * @example
  * ```ts
- * prompt: ({ formData, promptContext }) =>
- *   `Create a ${formData.doc_type} document based on:\n${JSON.stringify(promptContext, null, 2)}`
+ * prompt: ({ formData, aiContext }) =>
+ *   `Create a document based on:\n${JSON.stringify({ formData, aiContext }, null, 2)}`
  * ```
  */
 export type ScenarioPrompt<
   TFormData extends Record<string, unknown> = Record<string, unknown>,
-> = (params: { formData: TFormData; promptContext: PromptContext }) => string;
+> = (params: { formData: TFormData; aiContext: AiContext }) => string;
 
 /**
  * Complete scenario definition
@@ -716,8 +767,8 @@ export type ScenarioPrompt<
  *   id: 'design-doc',
  *   name: 'Design Document',
  *   steps: [...],
- *   prompt: ({ promptContext }) =>
- *     `Generate a design doc based on:\n${JSON.stringify(promptContext, null, 2)}`,
+ *   prompt: ({ formData, aiContext }) =>
+ *     `Generate a design doc based on:\n${JSON.stringify({ formData, aiContext }, null, 2)}`,
  *   outputDir: './docs/designs',
  *   filename: ({ formData, timestamp }) =>
  *     `${formData.overview?.title ?? 'untitled'}-${timestamp}.md`,
@@ -802,7 +853,7 @@ type UnionToIntersection<U> = (
  *       ] as const,
  *     },
  *   ],
- *   prompt: ({ promptContext }) => '...',
+ *   prompt: ({ formData, aiContext }) => '...',
  * } as const satisfies Scenario;
  *
  * type MyFormData = InferFormData<typeof scenario>;
@@ -1016,8 +1067,8 @@ export type Config = {
  *   id: 'my-scenario',
  *   name: 'My Scenario',
  *   steps,
- *   prompt: ({ promptContext }) =>
- *     `Generate document based on:\n${JSON.stringify(promptContext, null, 2)}`,
+ *   prompt: ({ formData, aiContext }) =>
+ *     `Generate document based on:\n${JSON.stringify({ formData, aiContext }, null, 2)}`,
  *   outputDir: 'docs',
  *   filename: ({ formData }) => {
  *     // formData is now type-safe!
