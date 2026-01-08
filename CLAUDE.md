@@ -38,7 +38,13 @@ pnpm release                        # Changesets publish
   - `src/server/usecases/docs/generate-doc.ts` - Claude Agent SDK integration with SSE streaming
 - `src/client/` - React app with TanStack Router (file-based routing in routes/)
   - `src/client/locales/` - i18n translation files (.po files, .ts compiled)
-  - `src/client/features/` - Feature modules (docs, step, scenario, snackbar)
+  - `src/client/features/` - Feature modules:
+    - `form/` - Form components (FieldRenderer, Input, Select, Checkbox, Textarea) and services
+    - `section/` - Section components (ArraySection, SingleSection) and services
+    - `step/` - Step UI (MobileDrawer, StepAside, StepNavigation, StepProgress) and stores
+    - `docs/` - Document handling (preview, mutations, queries)
+    - `scenario/` - Scenario queries
+    - `snackbar/` - Toast notifications
 - `src/types.ts` - Core type definitions (Config, Scenario, Section, Field types)
 - `src/schema.ts` - Valibot validation schemas
 - `src/definitions.ts` - Re-exports from types.ts and schema.ts
@@ -90,11 +96,17 @@ pnpm release                        # Changesets publish
 
 **Field Types**:
 
-- `input` - Text input (supports text, date, url types)
+- `input` - Text input (supports text, date, url types, suggestions)
 - `textarea` - Multi-line text
 - `select` - Dropdown with options
 - `checkbox` - Boolean toggle
 - `grid` - Layout for arranging fields in columns
+
+**Conditional Field Display** (`when` property):
+
+- Object form: `{ field: 'priority', is: 'high' }`, `{ field: 'priority', isNot: 'low' }`, `{ field: 'title', isEmpty: true }`, `{ field: 'title', isNotEmpty: true }`
+- Function form: `(formData) => formData.priority === 'high' && formData.type === 'feature'`
+- Hidden fields are excluded from validation and form submission
 
 **Section Types**:
 

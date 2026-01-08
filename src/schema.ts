@@ -13,12 +13,52 @@ export const isLayoutField = (field: Field): field is LayoutField => {
 // Form Field Schemas
 // =============================================================================
 
+// =============================================================================
+// Field Condition Schema
+// =============================================================================
+
+const FieldConditionObjectSchema = v.union([
+  v.object({
+    field: v.string(),
+    is: v.union([
+      v.string(),
+      v.boolean(),
+      v.array(v.union([v.string(), v.boolean()])),
+    ]),
+  }),
+  v.object({
+    field: v.string(),
+    isNot: v.union([
+      v.string(),
+      v.boolean(),
+      v.array(v.union([v.string(), v.boolean()])),
+    ]),
+  }),
+  v.object({
+    field: v.string(),
+    isEmpty: v.literal(true),
+  }),
+  v.object({
+    field: v.string(),
+    isNotEmpty: v.literal(true),
+  }),
+]);
+
+// Allow both object and function forms
+const FieldConditionSchema = v.union([
+  FieldConditionObjectSchema,
+  v.custom<(formData: Record<string, unknown>) => boolean>(
+    (value) => typeof value === 'function',
+  ),
+]);
+
 const FieldBaseSchema = v.object({
   id: v.string(),
   label: v.string(),
   description: v.string(),
   placeholder: v.optional(v.string()),
   required: v.optional(v.boolean()),
+  when: v.optional(FieldConditionSchema),
 });
 
 export const SelectOptionSchema = v.object({

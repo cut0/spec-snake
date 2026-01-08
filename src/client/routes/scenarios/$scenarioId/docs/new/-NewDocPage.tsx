@@ -9,14 +9,17 @@ import { usePreviewDocMutation } from '../../../../../features/docs/mutations/us
 import { useSubmitDocMutation } from '../../../../../features/docs/mutations/useSubmitDocMutation';
 import { useDocsStore } from '../../../../../features/docs/stores/useDocsStore';
 import { scenarioQueryOptions } from '../../../../../features/scenario/queries/fetchScenarioQueryOption';
+import { ArraySection } from '../../../../../features/section/components/ArraySection';
+import { SingleSection } from '../../../../../features/section/components/SingleSection';
+import {
+  filterVisibleFormData,
+  getSectionStatus,
+} from '../../../../../features/section/services';
 import { useSnackbar } from '../../../../../features/snackbar/stores/snackbar';
-import { ArraySection } from '../../../../../features/step/components/ArraySection';
 import { MobileDrawer } from '../../../../../features/step/components/MobileDrawer';
-import { SingleSection } from '../../../../../features/step/components/SingleSection';
 import { StepAside } from '../../../../../features/step/components/StepAside';
 import { StepNavigation } from '../../../../../features/step/components/StepNavigation';
 import { StepProgress } from '../../../../../features/step/components/StepProgress';
-import { getSectionStatus } from '../../../../../features/step/services';
 import { useStepAsideStore } from '../../../../../features/step/stores/useStepAsideStore';
 import { useStepFormStore } from '../../../../../features/step/stores/useStepFormStore';
 
@@ -30,7 +33,7 @@ export const NewDocPage = () => {
   const { scenario, permissions } = data;
   const { steps } = scenario;
 
-  // Store（新規作成モード: formKey 省略）
+  // Store (new mode: formKey omitted)
   const { formValues, setFormError } = useStepFormStore();
   const { previewContent, setPreviewContent } = useDocsStore();
   const { navStatuses, updateNavStatus } = useStepAsideStore();
@@ -70,7 +73,7 @@ export const NewDocPage = () => {
       return;
     }
 
-    // バリデーション
+    // Validation (skip hidden fields)
     let hasError = false;
     for (const s of steps) {
       const sectionName = s.section.name;
@@ -90,7 +93,17 @@ export const NewDocPage = () => {
       return;
     }
 
-    previewMutation.mutate({ scenarioId, formData: formValues });
+    // Create form data excluding hidden fields
+    const filteredFormData: Record<string, unknown> = {};
+    for (const s of steps) {
+      const sectionName = s.section.name;
+      filteredFormData[sectionName] = filterVisibleFormData(
+        s.section,
+        formValues[sectionName],
+      );
+    }
+
+    previewMutation.mutate({ scenarioId, formData: filteredFormData });
   }, [
     previewMutation,
     steps,

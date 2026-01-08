@@ -5,8 +5,8 @@ import type {
   SingleSection as SingleSectionType,
   Step,
 } from '../../../../../definitions';
-import { useSyncStepState } from '../../stores/useSyncStepState';
-import { FieldRenderer } from '../FieldRenderer';
+import { FieldRenderer } from '../../../form/components/FieldRenderer';
+import { useSyncStepState } from '../../../step/stores/useSyncStepState';
 
 type SingleSectionProps = {
   step: Step;
@@ -26,7 +26,7 @@ export const SingleSection: FC<SingleSectionProps> = ({ step, formKey }) => {
 
   const watchedValues = useWatch({ control: methods.control });
 
-  // zustand に同期
+  // Sync to zustand
   useEffect(() => {
     updateSectionValue(watchedValues);
   }, [watchedValues, updateSectionValue]);

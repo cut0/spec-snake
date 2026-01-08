@@ -15,8 +15,8 @@ const getDistClientDir = (): string => {
   const __filename = url.fileURLToPath(import.meta.url);
   const __dirname = path.dirname(__filename);
 
-  // ビルド後: dist/cli.js → dist/client (同じ dist 配下)
-  // 開発時: src/cli/commands/start.ts → dist/client (3階層上の dist 配下)
+  // After build: dist/cli.js → dist/client (same dist directory)
+  // During development: src/cli/commands/start.ts → dist/client (3 levels up in dist)
   const isBuilt = __dirname.endsWith('/dist') || __dirname.includes('/dist/');
   return isBuilt
     ? path.resolve(__dirname, 'client')
@@ -43,7 +43,7 @@ const loadConfig = async (configPath: string): Promise<Config> => {
     throw new Error(`Invalid config:\n${issues.join('\n')}`);
   }
 
-  // hooks は valibot でバリデーションできないため、元の config から保持
+  // hooks cannot be validated with valibot, so preserve from original config
   return config;
 };
 

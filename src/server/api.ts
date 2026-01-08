@@ -17,7 +17,7 @@ export const createApiServer = (rawConfig: Config) => {
       }
     : rawConfig;
 
-  // シナリオごとの情報を事前にビルド
+  // Pre-build scenario info map
   const scenarioInfoMap = new Map(
     config.scenarios.map((scenario) => [
       scenario.id,

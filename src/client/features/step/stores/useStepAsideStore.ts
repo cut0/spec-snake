@@ -1,7 +1,8 @@
 import { useCallback, useMemo } from 'react';
 
-import { type NavItemStatus, useStepAsideStoreBase } from './step-aside';
 import { getFormKey, useStepFormStoreBase } from './step-form';
+
+import { type NavItemStatus, useStepAsideStoreBase } from './step-aside';
 
 type UseStepAsideStoreOptions = {
   formKey?: string;
@@ -18,7 +19,7 @@ export const useStepAsideStore = (options: UseStepAsideStoreOptions = {}) => {
 
   const updateNavStatus = useCallback(
     (sectionName: string) => {
-      // 最新のエラー状態を直接ストアから取得
+      // Get latest error state directly from store
       const currentErrors =
         useStepFormStoreBase.getState().forms[key]?.errors ?? {};
       const hasError = currentErrors[sectionName] === true;

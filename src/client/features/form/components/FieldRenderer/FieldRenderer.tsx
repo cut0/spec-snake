@@ -1,8 +1,9 @@
-import { type FC, useCallback } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { type FC, useCallback, useMemo } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
+import { Checkbox, Input, Select, Textarea } from '..';
 import type { Field } from '../../../../../definitions';
-import { Checkbox, Input, Select, Textarea } from '../../../../components/Form';
+import { isFieldVisible } from '../../services';
 
 type FieldRendererProps = {
   field: Field;
@@ -63,9 +64,22 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
   namePrefix = '',
 }) => {
   const { register, control } = useFormContext();
+  const formData = useWatch({ control }) as Record<string, unknown>;
 
   const getFieldName = (fieldId: string) =>
     namePrefix ? `${namePrefix}.${fieldId}` : fieldId;
+
+  // Check visibility condition
+  const isVisible = useMemo(() => {
+    // Grid layout doesn't have 'when' condition
+    if (field.type === 'grid') return true;
+
+    return isFieldVisible(field, formData);
+  }, [field, formData]);
+
+  if (!isVisible) {
+    return null;
+  }
 
   switch (field.type) {
     case 'input':

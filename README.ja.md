@@ -268,6 +268,59 @@ ArraySection - 複数のエントリを追加できるフィールドのグル�
 }
 ```
 
+#### GridField - フィールドを列に配置するレイアウト
+
+```typescript
+{
+  type: 'grid',
+  columns: 2,
+  fields: [
+    { type: 'input', id: 'firstName', label: '名' },
+    { type: 'input', id: 'lastName', label: '姓' }
+  ]
+}
+```
+
+### 条件付きフィールド表示
+
+`when` プロパティを使用して、他のフィールドの値に基づいてフィールドの表示/非表示を切り替えることができます。
+
+#### オブジェクト形式の条件（シンプルな場合に推奨）
+
+```typescript
+// priority が 'high' のときに表示
+{ type: 'input', id: 'deadline', label: '期限', when: { field: 'priority', is: 'high' } }
+
+// priority が 'high' または 'medium' のときに表示
+{ type: 'textarea', id: 'risk', label: 'リスク', when: { field: 'priority', is: ['high', 'medium'] } }
+
+// priority が 'low' 以外のときに表示
+{ type: 'input', id: 'reviewer', label: 'レビュアー', when: { field: 'priority', isNot: 'low' } }
+
+// チェックボックスがオンのときに表示
+{ type: 'input', id: 'date', label: '日付', when: { field: 'has_deadline', is: true } }
+
+// フィールドが空でないときに表示
+{ type: 'textarea', id: 'notes', label: 'メモ', when: { field: 'title', isNotEmpty: true } }
+
+// フィールドが空のときに表示
+{ type: 'input', id: 'fallback', label: 'フォールバック', when: { field: 'title', isEmpty: true } }
+```
+
+#### 関数形式の条件（複雑なロジック用）
+
+```typescript
+// 複数のフィールドを参照する複雑な条件
+{
+  type: 'textarea',
+  id: 'details',
+  label: '詳細',
+  when: (formData) => formData.priority === 'high' && formData.type === 'feature'
+}
+```
+
+**注意**: 非表示のフィールドはバリデーションとフォーム送信から自動的に除外されます。
+
 ### `AiSettings` - Claude Agent SDK の設定オプション
 
 | プロパティ                        | 型                                | 説明                                                      |

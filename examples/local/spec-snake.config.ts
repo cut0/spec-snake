@@ -44,6 +44,27 @@ const steps = [
           placeholder: 'Select priority',
           options: priorityOptions,
         },
+        // Conditional field: only shown when priority is 'high'
+        {
+          type: 'input',
+          id: 'deadline',
+          label: 'Deadline',
+          description: 'Target completion date (required for high priority)',
+          placeholder: 'YYYY-MM-DD',
+          inputType: 'date',
+          required: true,
+          when: { field: 'priority', is: 'high' },
+        },
+        // Conditional field: shown when priority is 'high' or 'medium'
+        {
+          type: 'textarea',
+          id: 'risk_assessment',
+          label: 'Risk Assessment',
+          description: 'Potential risks and mitigation strategies',
+          placeholder: 'Describe potential risks...',
+          rows: 3,
+          when: { field: 'priority', is: ['high', 'medium'] },
+        },
       ],
     },
   },
