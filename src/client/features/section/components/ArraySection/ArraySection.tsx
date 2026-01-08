@@ -13,7 +13,7 @@ import type {
 } from '../../../../../definitions';
 import { Button } from '../../../../components/Button';
 import { PlusIcon } from '../../../../components/Icons';
-import { useSyncStepState } from '../../stores/useSyncStepState';
+import { useSyncStepState } from '../../../step/stores/useSyncStepState';
 
 import { ArraySectionItem } from './ArraySectionItem';
 
@@ -32,7 +32,7 @@ export const ArraySection: FC<ArraySectionProps> = ({ step, formKey }) => {
 
   const minFieldCount = section.minFieldCount ?? 0;
 
-  // 初期値を minFieldCount 分確保
+  // Ensure initial items meet minFieldCount
   const initialItems = sectionValue as Record<string, unknown>[];
   const defaultItems =
     initialItems.length >= minFieldCount
@@ -57,7 +57,7 @@ export const ArraySection: FC<ArraySectionProps> = ({ step, formKey }) => {
 
   const watchedValues = useWatch({ control, name: 'items' });
 
-  // zustand に同期
+  // Sync to zustand
   useEffect(() => {
     if (watchedValues) {
       updateSectionValue(watchedValues);

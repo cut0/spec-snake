@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import type { Section } from '../../../../definitions';
-import { getSectionStatus } from '../services';
+import { getSectionStatus } from '../../section/services';
 
 import { getFormKey, useStepFormStoreBase } from './step-form';
 

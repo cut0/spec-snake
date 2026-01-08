@@ -19,14 +19,14 @@ export const createScenariosApp = (
 ) => {
   const app = new Hono();
 
-  // 全シナリオ取得
+  // Get all scenarios
   app.get('/api/scenarios', (c) => {
     return c.json({
       scenarios: config.scenarios,
     });
   });
 
-  // 単一シナリオ取得
+  // Get single scenario
   app.get('/api/scenarios/:scenarioId', (c) => {
     const scenarioId = c.req.param('scenarioId');
     const scenarioInfo = scenarioInfoMap.get(scenarioId);

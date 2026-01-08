@@ -1,7 +1,7 @@
 import { Checkbox as BaseCheckbox } from '@base-ui/react/checkbox';
 import { type FC, useId } from 'react';
 
-import { CheckIconSmall } from '../../Icons';
+import { CheckIconSmall } from '../../../../components/Icons';
 
 type CheckboxProps = {
   label?: string;

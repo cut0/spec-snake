@@ -1,7 +1,7 @@
 import { Select as BaseSelect } from '@base-ui/react/select';
 import type { FC } from 'react';
 
-import { CheckIcon, ChevronDownIcon } from '../../Icons';
+import { CheckIcon, ChevronDownIcon } from '../../../../components/Icons';
 
 type SelectOption = {
   value: string;

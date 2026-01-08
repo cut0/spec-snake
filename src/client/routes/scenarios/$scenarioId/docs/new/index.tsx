@@ -23,7 +23,7 @@ export const Route = createFileRoute('/scenarios/$scenarioId/docs/new/')({
 
     const { steps } = data.scenario;
 
-    // step パラメータから index を計算、なければ最初のステップ
+    // Calculate index from step parameter, default to first step
     const foundIndex =
       deps.step != null ? steps.findIndex((s) => s.slug === deps.step) : -1;
     const stepIndex = foundIndex !== -1 ? foundIndex : 0;
@@ -33,7 +33,7 @@ export const Route = createFileRoute('/scenarios/$scenarioId/docs/new/')({
       throw notFound();
     }
 
-    // フォームを初期化（必要な場合のみ）
+    // Initialize form (only if needed)
     initializeFormIfNeeded({ initialValues: data.formDefaultValues });
 
     return {

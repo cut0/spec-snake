@@ -265,6 +265,59 @@ ArraySection - A group of fields that can have multiple entries
 }
 ```
 
+#### GridField - Layout for arranging fields in columns
+
+```typescript
+{
+  type: 'grid',
+  columns: 2,
+  fields: [
+    { type: 'input', id: 'firstName', label: 'First Name' },
+    { type: 'input', id: 'lastName', label: 'Last Name' }
+  ]
+}
+```
+
+### Conditional Field Display
+
+Fields can be conditionally shown/hidden based on other field values using the `when` property.
+
+#### Object-based conditions (recommended for simple cases)
+
+```typescript
+// Show when priority is 'high'
+{ type: 'input', id: 'deadline', label: 'Deadline', when: { field: 'priority', is: 'high' } }
+
+// Show when priority is 'high' or 'medium'
+{ type: 'textarea', id: 'risk', label: 'Risk', when: { field: 'priority', is: ['high', 'medium'] } }
+
+// Show when priority is NOT 'low'
+{ type: 'input', id: 'reviewer', label: 'Reviewer', when: { field: 'priority', isNot: 'low' } }
+
+// Show when checkbox is checked
+{ type: 'input', id: 'date', label: 'Date', when: { field: 'has_deadline', is: true } }
+
+// Show when field is not empty
+{ type: 'textarea', id: 'notes', label: 'Notes', when: { field: 'title', isNotEmpty: true } }
+
+// Show when field is empty
+{ type: 'input', id: 'fallback', label: 'Fallback', when: { field: 'title', isEmpty: true } }
+```
+
+#### Function-based conditions (for complex logic)
+
+```typescript
+// Complex condition with multiple fields
+{
+  type: 'textarea',
+  id: 'details',
+  label: 'Details',
+  when: (formData) => formData.priority === 'high' && formData.type === 'feature'
+}
+```
+
+**Note**: Hidden fields are automatically excluded from validation and form submission.
+
 ### `AiSettings` - Claude Agent SDK settings
 
 | Property                          | Type                              | Description                                                 |

@@ -37,6 +37,71 @@ export type SelectOption = {
   label: string;
 };
 
+// =============================================================================
+// Field Condition Types
+// =============================================================================
+
+/**
+ * Declarative condition for field visibility
+ *
+ * Use this for simple conditions like "show when field X equals Y".
+ * For complex conditions, use a function instead.
+ *
+ * @example
+ * ```ts
+ * // Show when priority is 'high'
+ * when: { field: 'priority', is: 'high' }
+ *
+ * // Show when priority is 'high' or 'medium'
+ * when: { field: 'priority', is: ['high', 'medium'] }
+ *
+ * // Show when priority is NOT 'low'
+ * when: { field: 'priority', isNot: 'low' }
+ *
+ * // Show when checkbox is checked
+ * when: { field: 'has_deadline', is: true }
+ *
+ * // Show when field is not empty
+ * when: { field: 'title', isNotEmpty: true }
+ * ```
+ */
+export type FieldConditionObject =
+  | { field: string; is: string | boolean | (string | boolean)[] }
+  | { field: string; isNot: string | boolean | (string | boolean)[] }
+  | { field: string; isEmpty: true }
+  | { field: string; isNotEmpty: true };
+
+/**
+ * Function-based condition for complex visibility logic
+ *
+ * Receives the current form data and returns whether the field should be visible.
+ * Use this when you need to reference multiple fields or complex logic.
+ *
+ * @example
+ * ```ts
+ * // Complex condition with multiple fields
+ * when: (formData) =>
+ *   formData.priority === 'high' && formData.type === 'feature'
+ *
+ * // Cross-section reference
+ * when: (formData) =>
+ *   formData.overview?.includeDeadline === true
+ * ```
+ */
+export type FieldConditionFunction<
+  TFormData extends Record<string, unknown> = Record<string, unknown>,
+> = (formData: TFormData) => boolean;
+
+/**
+ * Field visibility condition (hybrid: object or function)
+ *
+ * - Use object form for simple conditions (recommended for most cases)
+ * - Use function form for complex conditions
+ */
+export type FieldCondition<
+  TFormData extends Record<string, unknown> = Record<string, unknown>,
+> = FieldConditionObject | FieldConditionFunction<TFormData>;
+
 /**
  * Text input field configuration
  *
@@ -74,6 +139,8 @@ export type InputField = {
   inputType?: 'text' | 'date' | 'url';
   /** Autocomplete suggestions shown as datalist options */
   suggestions?: string[];
+  /** Condition for when this field should be visible */
+  when?: FieldCondition;
 };
 
 /**
@@ -105,6 +172,8 @@ export type TextareaField = {
   type: 'textarea';
   /** Number of visible text rows (affects initial height) */
   rows?: number;
+  /** Condition for when this field should be visible */
+  when?: FieldCondition;
 };
 
 /**
@@ -140,6 +209,8 @@ export type SelectField = {
   type: 'select';
   /** Available options for selection */
   options: SelectOption[];
+  /** Condition for when this field should be visible */
+  when?: FieldCondition;
 };
 
 /**
@@ -169,6 +240,8 @@ export type CheckboxField = {
   required?: boolean;
   /** Field type discriminator */
   type: 'checkbox';
+  /** Condition for when this field should be visible */
+  when?: FieldCondition;
 };
 
 export type FormField =

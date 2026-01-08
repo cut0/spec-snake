@@ -32,7 +32,7 @@ export const Route = createFileRoute('/scenarios/$scenarioId/docs/$filename/')({
 
     const { steps } = scenarioData.scenario;
 
-    // step パラメータから index を計算、なければ最初のステップ
+    // Calculate index from step parameter, default to first step
     const foundIndex =
       deps.step != null ? steps.findIndex((s) => s.slug === deps.step) : -1;
     const stepIndex = foundIndex !== -1 ? foundIndex : 0;
@@ -42,10 +42,10 @@ export const Route = createFileRoute('/scenarios/$scenarioId/docs/$filename/')({
       throw notFound();
     }
 
-    // filename を formKey として使用
+    // Use filename as formKey
     const formKey = params.filename;
 
-    // 編集モード用のステート初期化（必要な場合のみ）
+    // Initialize state for edit mode (only if needed)
     initializeFormIfNeeded({ initialValues: doc.metadata.formData, formKey });
     initializePreviewIfNeeded({ content: doc.content, formKey });
 

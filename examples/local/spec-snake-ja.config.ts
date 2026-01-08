@@ -44,6 +44,27 @@ const steps = [
           placeholder: '優先度を選択',
           options: priorityOptions,
         },
+        // 条件付きフィールド: 優先度が「高」の場合のみ表示
+        {
+          type: 'input',
+          id: 'deadline',
+          label: '締め切り',
+          description: '目標完了日（高優先度の場合は必須）',
+          placeholder: 'YYYY-MM-DD',
+          inputType: 'date',
+          required: true,
+          when: { field: 'priority', is: 'high' },
+        },
+        // 条件付きフィールド: 優先度が「高」または「中」の場合に表示
+        {
+          type: 'textarea',
+          id: 'risk_assessment',
+          label: 'リスク評価',
+          description: '想定されるリスクと対策',
+          placeholder: '想定されるリスクを記述...',
+          rows: 3,
+          when: { field: 'priority', is: ['high', 'medium'] },
+        },
       ],
     },
   },

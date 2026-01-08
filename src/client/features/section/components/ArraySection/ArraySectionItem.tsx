@@ -3,7 +3,7 @@ import { type FC, useCallback } from 'react';
 import type { Field } from '../../../../../definitions';
 import { Button } from '../../../../components/Button';
 import { TrashIcon } from '../../../../components/Icons';
-import { FieldRenderer } from '../FieldRenderer';
+import { FieldRenderer } from '../../../form/components/FieldRenderer';
 
 type ArraySectionItemProps = {
   index: number;
