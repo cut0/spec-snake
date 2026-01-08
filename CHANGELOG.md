@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.7
+
+### Patch Changes
+
+- 41278c2: fix: when condition now works in array sections
+
 ## 0.0.1-beta.6
 
 ### Patch Changes
