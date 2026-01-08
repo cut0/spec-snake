@@ -90,6 +90,15 @@ const steps = [
           description: 'Name of the library',
           placeholder: 'e.g., react-query, zod',
           required: true,
+          suggestions: [
+            'react-query',
+            'zod',
+            'zustand',
+            'react-hook-form',
+            'tailwindcss',
+            'axios',
+            'lodash',
+          ],
         },
         {
           type: 'input',
