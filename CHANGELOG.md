@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.5
+
+### Patch Changes
+
+- 8c49b5e: fix: improve suggestion input state management with react-hook-form
+
 ## 0.0.1-beta.4
 
 ### Patch Changes
