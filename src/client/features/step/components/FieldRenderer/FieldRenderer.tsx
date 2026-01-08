@@ -69,13 +69,34 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
 
   switch (field.type) {
     case 'input':
+      if (field.suggestions != null && field.suggestions.length > 0) {
+        return (
+          <Controller
+            control={control}
+            name={getFieldName(field.id)}
+            render={({ field: controllerField }) => (
+              <Input
+                ref={controllerField.ref}
+                label={field.label}
+                name={controllerField.name}
+                placeholder={field.placeholder}
+                required={field.required}
+                suggestions={field.suggestions}
+                type={field.inputType}
+                value={controllerField.value ?? ''}
+                onBlur={controllerField.onBlur}
+                onValueChange={controllerField.onChange}
+              />
+            )}
+          />
+        );
+      }
       return (
         <Input
           {...register(getFieldName(field.id))}
           label={field.label}
           placeholder={field.placeholder}
           required={field.required}
-          suggestions={field.suggestions}
           type={field.inputType}
         />
       );
