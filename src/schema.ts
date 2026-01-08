@@ -1,12 +1,22 @@
 import * as v from 'valibot';
-import type { Field, GridLayout, LayoutField } from './types';
+import type {
+  Field,
+  GridLayout,
+  GroupLayout,
+  LayoutField,
+  RepeatableLayout,
+} from './types';
 
 // =============================================================================
 // Type Guards
 // =============================================================================
 
 export const isLayoutField = (field: Field): field is LayoutField => {
-  return field.type === 'grid';
+  return (
+    field.type === 'grid' ||
+    field.type === 'repeatable' ||
+    field.type === 'group'
+  );
 };
 
 // =============================================================================
@@ -107,29 +117,25 @@ export const GridLayoutSchema: v.GenericSchema<GridLayout> = v.object({
   fields: v.array(v.lazy(() => FieldSchema)),
 });
 
+export const GroupLayoutSchema: v.GenericSchema<GroupLayout> = v.object({
+  type: v.literal('group'),
+  fields: v.array(v.lazy(() => FieldSchema)),
+});
+
+export const RepeatableLayoutSchema: v.GenericSchema<RepeatableLayout> =
+  v.object({
+    type: v.literal('repeatable'),
+    id: v.string(),
+    minCount: v.optional(v.number()),
+    field: v.union([FormFieldSchema, GroupLayoutSchema]),
+  });
+
 export const FieldSchema: v.GenericSchema<Field> = v.union([
   FormFieldSchema,
   GridLayoutSchema,
+  RepeatableLayoutSchema,
+  GroupLayoutSchema,
 ]);
-
-// =============================================================================
-// Section Schemas
-// =============================================================================
-
-export const SingleSectionSchema = v.object({
-  type: v.literal('single'),
-  name: v.string(),
-  fields: v.array(FieldSchema),
-});
-
-export const ArraySectionSchema = v.object({
-  type: v.literal('array'),
-  name: v.string(),
-  fields: v.array(FieldSchema),
-  minFieldCount: v.optional(v.number()),
-});
-
-export const SectionSchema = v.union([SingleSectionSchema, ArraySectionSchema]);
 
 // =============================================================================
 // Step Schema
@@ -139,7 +145,8 @@ export const StepSchema = v.object({
   slug: v.string(),
   title: v.string(),
   description: v.string(),
-  section: SectionSchema,
+  name: v.string(),
+  fields: v.array(FieldSchema),
 });
 
 // =============================================================================
@@ -207,7 +214,9 @@ export const ScenarioBaseSchema = v.object({
   id: v.string(),
   name: v.string(),
   steps: v.array(StepSchema),
-  prompt: v.unknown(),
+  prompt: v.custom<
+    (params: { formData: unknown; aiContext: unknown }) => string
+  >((value) => typeof value === 'function'),
   aiSettings: AiSettingsSchema,
 });
 

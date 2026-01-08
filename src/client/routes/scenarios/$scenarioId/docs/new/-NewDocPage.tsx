@@ -9,17 +9,16 @@ import { usePreviewDocMutation } from '../../../../../features/docs/mutations/us
 import { useSubmitDocMutation } from '../../../../../features/docs/mutations/useSubmitDocMutation';
 import { useDocsStore } from '../../../../../features/docs/stores/useDocsStore';
 import { scenarioQueryOptions } from '../../../../../features/scenario/queries/fetchScenarioQueryOption';
-import { ArraySection } from '../../../../../features/section/components/ArraySection';
-import { SingleSection } from '../../../../../features/section/components/SingleSection';
-import {
-  filterVisibleFormData,
-  getSectionStatus,
-} from '../../../../../features/section/services';
 import { useSnackbar } from '../../../../../features/snackbar/stores/snackbar';
 import { MobileDrawer } from '../../../../../features/step/components/MobileDrawer';
 import { StepAside } from '../../../../../features/step/components/StepAside';
 import { StepNavigation } from '../../../../../features/step/components/StepNavigation';
 import { StepProgress } from '../../../../../features/step/components/StepProgress';
+import { StepSection } from '../../../../../features/step/components/StepSection';
+import {
+  filterVisibleFormData,
+  getStepStatus,
+} from '../../../../../features/step/services';
 import { useStepAsideStore } from '../../../../../features/step/stores/useStepAsideStore';
 import { useStepFormStore } from '../../../../../features/step/stores/useStepFormStore';
 
@@ -76,12 +75,12 @@ export const NewDocPage = () => {
     // Validation (skip hidden fields)
     let hasError = false;
     for (const s of steps) {
-      const sectionName = s.section.name;
-      const value = formValues[sectionName];
-      const isError = getSectionStatus(s.section, value) === 'error';
+      const stepName = s.name;
+      const value = formValues[stepName];
+      const isError = getStepStatus(s, value) === 'error';
 
-      setFormError(sectionName, isError);
-      updateNavStatus(sectionName);
+      setFormError(stepName, isError);
+      updateNavStatus(stepName);
 
       if (isError) {
         hasError = true;
@@ -96,10 +95,10 @@ export const NewDocPage = () => {
     // Create form data excluding hidden fields
     const filteredFormData: Record<string, unknown> = {};
     for (const s of steps) {
-      const sectionName = s.section.name;
-      filteredFormData[sectionName] = filterVisibleFormData(
-        s.section,
-        formValues[sectionName],
+      const stepName = s.name;
+      filteredFormData[stepName] = filterVisibleFormData(
+        s,
+        formValues[stepName],
       );
     }
 
@@ -153,22 +152,22 @@ export const NewDocPage = () => {
         title: s.title,
         description: s.description,
         step: i + 1,
-        sectionName: s.section.name,
-        status: navStatuses[s.section.name] ?? 'default',
+        sectionName: s.name,
+        status: navStatuses[s.name] ?? 'default',
         selected: i === stepIndex,
       })),
     [steps, scenarioId, navStatuses, stepIndex],
   );
 
   const handleNavigate = useCallback(() => {
-    updateNavStatus(step.section.name);
+    updateNavStatus(step.name);
     requestAnimationFrame(() => {
       const activeTab = document.querySelector<HTMLElement>(
         '[role="tab"][aria-selected="true"]',
       );
       activeTab?.focus();
     });
-  }, [step.section.name, updateNavStatus]);
+  }, [step.name, updateNavStatus]);
 
   const prev = useMemo(
     () =>
@@ -176,10 +175,10 @@ export const NewDocPage = () => {
         ? {
             to: `/scenarios/${scenarioId}/docs/new?step=${prevStep.slug}`,
             label: t`Back`,
-            onClick: () => updateNavStatus(step.section.name),
+            onClick: () => updateNavStatus(step.name),
           }
         : undefined,
-    [prevStep, scenarioId, step.section.name, updateNavStatus, t],
+    [prevStep, scenarioId, step.name, updateNavStatus, t],
   );
 
   const next = useMemo(
@@ -188,10 +187,10 @@ export const NewDocPage = () => {
         ? {
             to: `/scenarios/${scenarioId}/docs/new?step=${nextStep.slug}`,
             label: t`Next`,
-            onClick: () => updateNavStatus(step.section.name),
+            onClick: () => updateNavStatus(step.name),
           }
         : undefined,
-    [nextStep, scenarioId, step.section.name, updateNavStatus, t],
+    [nextStep, scenarioId, step.name, updateNavStatus, t],
   );
 
   return (
@@ -243,11 +242,7 @@ export const NewDocPage = () => {
             total={steps.length}
           />
         </div>
-        {step.section.type === 'single' ? (
-          <SingleSection key={step.slug} step={step} />
-        ) : (
-          <ArraySection key={step.slug} step={step} />
-        )}
+        <StepSection key={step.slug} step={step} />
 
         <StepNavigation
           prev={prev}

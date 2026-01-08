@@ -257,7 +257,7 @@ export type FormField =
 /**
  * Grid layout for arranging multiple fields in columns
  *
- * Allows organizing form fields horizontally within a section.
+ * Allows organizing form fields horizontally within a step.
  * Supports nested fields including other grids (recursive).
  *
  * @example
@@ -281,67 +281,78 @@ export type GridLayout = {
   fields: Field[];
 };
 
-export type LayoutField = GridLayout;
-export type Field = FormField | LayoutField;
-
-// =============================================================================
-// Section Types
-// =============================================================================
-
 /**
- * Single-instance section containing one set of fields
+ * Group layout for visually grouping multiple fields together
  *
- * Used when the user fills out the fields exactly once.
+ * Used for visual grouping only. Does not create nested structure in formData.
+ * To repeat a group of fields, wrap this in a RepeatableLayout.
  *
  * @example
  * ```ts
- * const section: SingleSection = {
- *   type: 'single',
- *   name: 'project_info',
- *   fields: [...]
- * };
- * ```
- */
-export type SingleSection = {
-  /** Section type discriminator */
-  type: 'single';
-  /** Section name (used as key in form data output) */
-  name: string;
-  /** Fields contained in this section */
-  fields: Field[];
-};
-
-/**
- * Array section allowing multiple instances of the same fields
- *
- * Used when the user can add multiple entries (e.g., team members, features).
- * Each entry contains the same field structure.
- *
- * @example
- * ```ts
- * const section: ArraySection = {
- *   type: 'array',
- *   name: 'team_members',
+ * // Standalone group (visual grouping only)
+ * const layout: GroupLayout = {
+ *   type: 'group',
  *   fields: [
- *     { id: 'name', type: 'input', ... },
- *     { id: 'role', type: 'select', ... }
- *   ],
- *   minFieldCount: 1
+ *     { id: 'firstName', type: 'input', label: 'First Name', description: '' },
+ *     { id: 'lastName', type: 'input', label: 'Last Name', description: '' }
+ *   ]
  * };
+ * // formData: { firstName: '...', lastName: '...' }
  * ```
  */
-export type ArraySection = {
-  /** Section type discriminator */
-  type: 'array';
-  /** Section name (used as key in form data output) */
-  name: string;
-  /** Fields template for each array entry */
+export type GroupLayout = {
+  /** Layout type discriminator */
+  type: 'group';
+  /** Fields contained in the group */
   fields: Field[];
-  /** Minimum number of entries required (default: 0) */
-  minFieldCount?: number;
 };
 
-export type Section = SingleSection | ArraySection;
+/**
+ * Repeatable layout for fields that can be repeated
+ *
+ * Allows users to add multiple instances of a field or group.
+ * The id is used as the key in form data, with values stored as an array.
+ *
+ * @example
+ * ```ts
+ * // Single field repeatable
+ * const tagsLayout: RepeatableLayout = {
+ *   type: 'repeatable',
+ *   id: 'tags',
+ *   minCount: 1,
+ *   field: { id: 'name', type: 'input', label: 'Tag', description: '' }
+ * };
+ * // formData: { tags: [{ name: 'tag1' }, { name: 'tag2' }] }
+ *
+ * // Group repeatable (multiple fields)
+ * const librariesLayout: RepeatableLayout = {
+ *   type: 'repeatable',
+ *   id: 'libraries',
+ *   minCount: 1,
+ *   field: {
+ *     type: 'group',
+ *     fields: [
+ *       { id: 'name', type: 'input', label: 'Name', description: '' },
+ *       { id: 'url', type: 'input', label: 'URL', description: '' }
+ *     ]
+ *   }
+ * };
+ * // formData: { libraries: [{ name: 'React', url: '...' }, ...] }
+ * ```
+ */
+export type RepeatableLayout = {
+  /** Layout type discriminator */
+  type: 'repeatable';
+  /** Unique identifier (used as key in form data) */
+  id: string;
+  /** Minimum number of entries required (default: 0) */
+  minCount?: number;
+  /** The field or group to repeat */
+  field: FormField | GroupLayout;
+};
+
+export type LayoutField = GridLayout | RepeatableLayout | GroupLayout;
+export type Field = FormField | LayoutField;
 
 // =============================================================================
 // Step Types
@@ -351,7 +362,7 @@ export type Section = SingleSection | ArraySection;
  * Step definition for multi-step form wizard
  *
  * Each step represents one page in the form wizard, containing
- * a section with fields for the user to fill out.
+ * fields for the user to fill out.
  *
  * @example
  * ```ts
@@ -359,12 +370,52 @@ export type Section = SingleSection | ArraySection;
  *   slug: 'basic-info',
  *   title: 'Basic Information',
  *   description: 'Enter the basic details of your project',
- *   section: {
- *     type: 'single',
- *     name: 'basic',
- *     fields: [...]
- *   }
+ *   name: 'basic',
+ *   fields: [
+ *     { id: 'title', type: 'input', label: 'Title', description: '...' },
+ *     { id: 'priority', type: 'select', label: 'Priority', description: '...', options: [...] }
+ *   ]
  * };
+ *
+ * // For repeatable fields (single field):
+ * const stepWithRepeatable: Step = {
+ *   slug: 'tags',
+ *   title: 'Tags',
+ *   description: 'Add tags',
+ *   name: 'tags',
+ *   fields: [
+ *     {
+ *       type: 'repeatable',
+ *       id: 'items',
+ *       minCount: 1,
+ *       field: { id: 'name', type: 'input', label: 'Tag', description: '' }
+ *     }
+ *   ]
+ * };
+ * // formData: { tags: { items: [{ name: 'tag1' }, { name: 'tag2' }] } }
+ *
+ * // For repeatable group (multiple fields):
+ * const stepWithRepeatableGroup: Step = {
+ *   slug: 'libraries',
+ *   title: 'Libraries',
+ *   description: 'Add libraries',
+ *   name: 'libraries',
+ *   fields: [
+ *     {
+ *       type: 'repeatable',
+ *       id: 'items',
+ *       minCount: 1,
+ *       field: {
+ *         type: 'group',
+ *         fields: [
+ *           { id: 'name', type: 'input', label: 'Name', description: '...' },
+ *           { id: 'url', type: 'input', label: 'URL', description: '...' }
+ *         ]
+ *       }
+ *     }
+ *   ]
+ * };
+ * // formData: { libraries: { items: [{ name: '...', url: '...' }, ...] } }
  * ```
  */
 export type Step = {
@@ -374,8 +425,10 @@ export type Step = {
   title: string;
   /** Description text shown below the title */
   description: string;
-  /** Section containing the step's fields */
-  section: Section;
+  /** Step name (used as key in form data output) */
+  name: string;
+  /** Fields contained in this step */
+  fields: Field[];
 };
 
 // =============================================================================
@@ -536,8 +589,6 @@ export type ScenarioBase = {
   name: string;
   /** Steps that make up the scenario's form wizard */
   steps: Step[];
-  /** Prompt template sent to Claude (use {{INPUT_JSON}} placeholder) */
-  prompt: string;
   /**
    * AI settings for Claude Agent SDK
    * @see AiSettings
@@ -546,19 +597,67 @@ export type ScenarioBase = {
 };
 
 /**
- * InputData type (transformed form data sent to Claude)
- *
- * This is the structure of `inputData` passed to hooks, prompts, and overrides.
- * It's the same as `{{INPUT_JSON}}` in prompts.
+ * Step metadata in AiContext
  */
-export type InputData = {
-  items: Array<{
-    title: string;
-    description: string;
-    values:
-      | Array<{ label: string; description: string; value: unknown }>
-      | Array<Array<{ label: string; description: string; value: unknown }>>;
-  }>;
+export type AiContextStepMeta = {
+  title: string;
+  description: string;
+};
+
+/**
+ * Field metadata in AiContext
+ */
+export type AiContextFieldMeta = {
+  label: string;
+  description: string;
+};
+
+/**
+ * AiContext for a repeatable field (nested structure)
+ */
+export type AiContextRepeatable = {
+  [fieldId: string]: AiContextFieldMeta | AiContextRepeatable;
+};
+
+/**
+ * AiContext for a step
+ */
+export type AiContextStep = {
+  _step: AiContextStepMeta;
+  [fieldId: string]:
+    | AiContextStepMeta
+    | AiContextFieldMeta
+    | AiContextRepeatable;
+};
+
+/**
+ * AiContext type - metadata for form fields to help AI understand the data
+ *
+ * This is included in formData as `ai_context` property.
+ * Contains labels and descriptions for each field, organized by step name.
+ *
+ * @example
+ * ```ts
+ * {
+ *   overview: {
+ *     _step: { title: "Overview", description: "Basic information" },
+ *     title: { label: "Title", description: "Feature title" },
+ *     priority: { label: "Priority", description: "Priority level" }
+ *   },
+ *   modules: {
+ *     _step: { title: "Modules", description: "Module structure" },
+ *     items: {
+ *       name: { label: "Module Name", description: "Name of the module" },
+ *       features: {
+ *         feature_name: { label: "Feature Name", description: "Name of feature" }
+ *       }
+ *     }
+ *   }
+ * }
+ * ```
+ */
+export type AiContext = {
+  [stepName: string]: AiContextStep;
 };
 
 /**
@@ -577,12 +676,12 @@ export type ScenarioHooks<
    * Use for logging, analytics, or transforming the preview content.
    *
    * @param params.formData - The raw form data from the UI
-   * @param params.inputData - The transformed data sent to Claude (same as {{INPUT_JSON}})
+   * @param params.aiContext - Field metadata (labels, descriptions) for AI
    * @param params.content - The generated markdown content
    */
   onPreview?: (params: {
     formData: TFormData;
-    inputData: InputData;
+    aiContext: AiContext;
     content: string;
   }) => Promise<void>;
 
@@ -595,84 +694,70 @@ export type ScenarioHooks<
    * @param params.filename - The filename that was used
    * @param params.outputPath - Full path to the saved file
    * @param params.formData - The raw form data from the UI
-   * @param params.inputData - The transformed data sent to Claude (same as {{INPUT_JSON}})
+   * @param params.aiContext - Field metadata (labels, descriptions) for AI
    */
   onSave?: (params: {
     content: string;
     filename: string;
     outputPath: string;
     formData: TFormData;
-    inputData: InputData;
+    aiContext: AiContext;
   }) => Promise<void>;
 };
 
 /**
- * Override options for scenario behavior
+ * Filename function type for custom document naming
  *
- * @typeParam TFormData - Type of the raw form data from UI
- */
-export type ScenarioOverrides<
-  TFormData extends Record<string, unknown> = Record<string, unknown>,
-> = {
-  /**
-   * Custom filename for saved documents
-   *
-   * Can be a static string or a function for dynamic naming.
-   * Default format: `{scenarioId}-{timestamp}.md`
-   *
-   * @example
-   * ```ts
-   * // Static filename
-   * filename: 'design-doc.md'
-   *
-   * // Dynamic filename based on form data
-   * filename: ({ formData, timestamp }) =>
-   *   `${formData.project_name}-${timestamp}.md`
-   * ```
-   */
-  filename?:
-    | string
-    | ((params: {
-        scenarioId: string;
-        timestamp: string;
-        content: string;
-        formData: TFormData;
-        inputData: InputData;
-      }) => string);
-};
-
-/**
- * Prompt template type
- *
- * Can be a static string or a function for dynamic prompt generation.
- * Use `{{INPUT_JSON}}` in the template to inject form data.
+ * Can be a static string or a function for dynamic naming.
+ * Default format: `design-doc-{scenarioId}-{timestamp}.md`
  *
  * @typeParam TFormData - Type of the raw form data from UI
  *
  * @example
  * ```ts
- * // Static prompt
- * prompt: `Generate a design doc based on: {{INPUT_JSON}}`
+ * // Static filename
+ * filename: 'design-doc.md'
  *
- * // Dynamic prompt
- * prompt: ({ formData, inputData }) =>
- *   `Create a ${formData.doc_type} document for: {{INPUT_JSON}}`
+ * // Dynamic filename based on form data
+ * filename: ({ formData, timestamp }) =>
+ *   `${formData.project_name}-${timestamp}.md`
  * ```
  */
-export type ScenarioPrompt<
+export type ScenarioFilename<
   TFormData extends Record<string, unknown> = Record<string, unknown>,
 > =
   | string
   | ((params: {
+      scenarioId: string;
+      timestamp: string;
+      content: string;
       formData: TFormData;
-      inputData: InputData;
+      aiContext: AiContext;
     }) => string);
+
+/**
+ * Prompt function type
+ *
+ * A function that generates the prompt string.
+ * Use `formData` for raw values and `aiContext` for field metadata.
+ *
+ * @typeParam TFormData - Type of the raw form data from UI
+ *
+ * @example
+ * ```ts
+ * prompt: ({ formData, aiContext }) =>
+ *   `Create a document based on:\n${JSON.stringify({ formData, aiContext }, null, 2)}`
+ * ```
+ */
+export type ScenarioPrompt<
+  TFormData extends Record<string, unknown> = Record<string, unknown>,
+> = (params: { formData: TFormData; aiContext: AiContext }) => string;
 
 /**
  * Complete scenario definition
  *
  * Extends ScenarioBase with function-based fields that cannot be
- * serialized to JSON (prompt can be a function, hooks, overrides).
+ * serialized to JSON (prompt and filename can be functions, hooks).
  *
  * @typeParam TFormData - Type of the raw form data from UI (inferred from steps)
  *
@@ -682,8 +767,11 @@ export type ScenarioPrompt<
  *   id: 'design-doc',
  *   name: 'Design Document',
  *   steps: [...],
- *   prompt: 'Generate a design doc based on: {{INPUT_JSON}}',
+ *   prompt: ({ formData, aiContext }) =>
+ *     `Generate a design doc based on:\n${JSON.stringify({ formData, aiContext }, null, 2)}`,
  *   outputDir: './docs/designs',
+ *   filename: ({ formData, timestamp }) =>
+ *     `${formData.overview?.title ?? 'untitled'}-${timestamp}.md`,
  *   aiSettings: {
  *     model: 'claude-sonnet-4-5'
  *   },
@@ -697,15 +785,15 @@ export type ScenarioPrompt<
  */
 export type Scenario<
   TFormData extends Record<string, unknown> = Record<string, unknown>,
-> = Omit<ScenarioBase, 'prompt'> & {
-  /** Prompt template (static string or dynamic function) */
+> = ScenarioBase & {
+  /** Prompt template function */
   prompt: ScenarioPrompt<TFormData>;
   /** Directory where generated documents are saved */
   outputDir?: string;
+  /** Custom filename for saved documents */
+  filename?: ScenarioFilename<TFormData>;
   /** Lifecycle hooks for custom behavior */
   hooks?: ScenarioHooks<TFormData>;
-  /** Override default behaviors */
-  overrides?: ScenarioOverrides<TFormData>;
 };
 
 // =============================================================================
@@ -743,9 +831,9 @@ type UnionToIntersection<U> = (
  * Infer the formData type from a Scenario's steps
  *
  * Use this utility type to get type-safe access to raw form data
- * in hooks, prompts, and overrides.
+ * in hooks, prompts, and filename.
  *
- * **Note**: This utility works with FormField arrays only (not GridLayout).
+ * **Note**: This utility works with FormField arrays only (not nested layouts).
  * Define fields with `as const` for literal type inference.
  *
  * @example
@@ -758,73 +846,40 @@ type UnionToIntersection<U> = (
  *       slug: 'overview',
  *       title: 'Overview',
  *       description: 'Project overview',
- *       section: {
- *         type: 'single',
- *         name: 'overview',
- *         fields: [
- *           { id: 'title', type: 'input', label: 'Title', description: '' },
- *           { id: 'description', type: 'textarea', label: 'Description', description: '' },
- *         ] as const,
- *       },
- *     },
- *     {
- *       slug: 'requirements',
- *       title: 'Requirements',
- *       description: 'List requirements',
- *       section: {
- *         type: 'array',
- *         name: 'requirements',
- *         fields: [
- *           { id: 'name', type: 'input', label: 'Name', description: '' },
- *         ] as const,
- *       },
+ *       name: 'overview',
+ *       fields: [
+ *         { id: 'title', type: 'input', label: 'Title', description: '' },
+ *         { id: 'description', type: 'textarea', label: 'Description', description: '' },
+ *       ] as const,
  *     },
  *   ],
- *   prompt: '...',
+ *   prompt: ({ formData, aiContext }) => '...',
  * } as const satisfies Scenario;
  *
  * type MyFormData = InferFormData<typeof scenario>;
  * // Result:
  * // {
  * //   overview: { title: string; description: string };
- * //   requirements: Array<{ name: string }>;
  * // }
  * ```
  */
 export type InferFormData<T extends Scenario> =
   T['steps'] extends readonly (infer S)[]
-    ? S extends { section: infer Sec }
-      ? Sec extends {
-          type: 'single';
-          name: infer N;
-          fields: readonly FormField[];
-        }
-        ? N extends string
-          ? { [K in N]: FormFieldsToObject<Sec['fields']> }
-          : never
-        : Sec extends {
-              type: 'array';
-              name: infer N;
-              fields: readonly FormField[];
-            }
-          ? N extends string
-            ? { [K in N]: Array<FormFieldsToObject<Sec['fields']>> }
-            : never
-          : never
+    ? S extends { name: infer N extends string; fields: readonly FormField[] }
+      ? { [K in N]: FormFieldsToObject<S['fields']> }
       : never
     : never;
 
 /**
  * Infer the merged formData type from a Scenario
  *
- * This flattens all steps' sections into a single object type.
+ * This flattens all steps into a single object type.
  *
  * @example
  * ```ts
  * type MyFormData = InferFormDataMerged<typeof scenario>;
  * // {
  * //   overview: { title: string; description: string };
- * //   requirements: Array<{ name: string }>;
  * // }
  * ```
  */
@@ -833,7 +888,7 @@ export type InferFormDataMerged<T extends Scenario> = UnionToIntersection<
 >;
 
 /**
- * Helper type to extract FormField from Field (handling one level of GridLayout)
+ * Helper type to extract FormField from Field (handling grid, repeatable, group layouts)
  */
 type ExtractFormFields<F> = F extends FormField
   ? F
@@ -841,10 +896,18 @@ type ExtractFormFields<F> = F extends FormField
     ? GF extends FormField
       ? GF
       : never
-    : never;
+    : F extends { type: 'repeatable'; field: infer RF }
+      ? RF extends FormField
+        ? RF
+        : never
+      : F extends { type: 'group'; fields: readonly (infer GF)[] }
+        ? GF extends FormField
+          ? GF
+          : never
+        : never;
 
 /**
- * Helper type to create an object type from Field array (supporting GridLayout)
+ * Helper type to create an object type from Field array (supporting layouts)
  */
 type FieldsToObject<Fields extends readonly Field[]> = {
   [F in ExtractFormFields<Fields[number]> as F extends {
@@ -858,10 +921,10 @@ type FieldsToObject<Fields extends readonly Field[]> = {
  * Infer the formData type directly from a steps array
  *
  * Use this utility type when defining scenarios with `defineScenario`
- * for type-safe access to formData in hooks, prompts, and overrides.
+ * for type-safe access to formData in hooks, prompts, and filename.
  *
  * **Note**: For best results, define steps with `as const satisfies Step[]`
- * to preserve literal types for section names and field IDs.
+ * to preserve literal types for step names and field IDs.
  *
  * @example
  * ```ts
@@ -870,52 +933,41 @@ type FieldsToObject<Fields extends readonly Field[]> = {
  *     slug: 'basic-info',
  *     title: 'Basic Info',
  *     description: 'Enter basic information',
- *     section: {
- *       type: 'single',
- *       name: 'basicInfo',
- *       fields: [
- *         { id: 'title', type: 'input', label: 'Title', description: '' },
- *       ],
- *     },
+ *     name: 'basicInfo',
+ *     fields: [
+ *       { id: 'title', type: 'input', label: 'Title', description: '' },
+ *     ],
  *   },
  *   {
- *     slug: 'items',
- *     title: 'Items',
- *     description: 'Add items',
- *     section: {
- *       type: 'array',
- *       name: 'items',
- *       fields: [
- *         { id: 'name', type: 'input', label: 'Name', description: '' },
- *       ],
- *     },
+ *     slug: 'libraries',
+ *     title: 'Libraries',
+ *     description: 'Add libraries',
+ *     name: 'libraries',
+ *     fields: [
+ *       {
+ *         type: 'group',
+ *         id: 'items',
+ *         minCount: 1,
+ *         fields: [
+ *           { id: 'name', type: 'input', label: 'Name', description: '' },
+ *         ],
+ *       },
+ *     ],
  *   },
  * ] as const satisfies Step[];
  *
  * type FormData = InferFormDataFromSteps<typeof steps>;
  * // {
  * //   basicInfo?: { title?: string };
- * //   items?: Array<{ name?: string }>;
+ * //   libraries?: { items?: Array<{ name?: string }> };
  * // }
  * ```
  */
 export type InferFormDataFromSteps<TSteps extends readonly Step[]> =
   UnionToIntersection<
     TSteps[number] extends infer S
-      ? S extends { section: infer Sec }
-        ? Sec extends {
-            type: 'single';
-            name: infer N extends string;
-            fields: readonly Field[];
-          }
-          ? { [K in N]?: FieldsToObject<Sec['fields']> }
-          : Sec extends {
-                type: 'array';
-                name: infer N extends string;
-                fields: readonly Field[];
-              }
-            ? { [K in N]?: Array<FieldsToObject<Sec['fields']>> }
-            : never
+      ? S extends { name: infer N extends string; fields: readonly Field[] }
+        ? { [K in N]?: FieldsToObject<S['fields']> }
         : never
       : never
   > &
@@ -971,7 +1023,7 @@ export type Config = {
  *
  * This function uses TypeScript's const type parameters to infer
  * literal types from the steps array, enabling type-safe access
- * to formData in hooks, prompts, and overrides.
+ * to formData in hooks, prompts, and filename.
  *
  * **Usage**: Define your steps with `as const satisfies Step[]` for best results.
  *
@@ -984,26 +1036,30 @@ export type Config = {
  *     slug: 'basic-info',
  *     title: 'Basic Info',
  *     description: 'Enter basic information',
- *     section: {
- *       type: 'single',
- *       name: 'basicInfo',
- *       fields: [
- *         { id: 'projectName', type: 'input', label: 'Project Name', description: '' },
- *         { id: 'overview', type: 'textarea', label: 'Overview', description: '' },
- *       ],
- *     },
+ *     name: 'basicInfo',
+ *     fields: [
+ *       { id: 'projectName', type: 'input', label: 'Project Name', description: '' },
+ *       { id: 'overview', type: 'textarea', label: 'Overview', description: '' },
+ *     ],
  *   },
  *   {
  *     slug: 'features',
  *     title: 'Features',
  *     description: 'List features',
- *     section: {
- *       type: 'array',
- *       name: 'features',
- *       fields: [
- *         { id: 'name', type: 'input', label: 'Feature Name', description: '' },
- *       ],
- *     },
+ *     name: 'features',
+ *     fields: [
+ *       {
+ *         type: 'repeatable',
+ *         id: 'items',
+ *         minCount: 1,
+ *         field: {
+ *           type: 'group',
+ *           fields: [
+ *             { id: 'name', type: 'input', label: 'Feature Name', description: '' },
+ *           ],
+ *         },
+ *       },
+ *     ],
  *   },
  * ] as const satisfies Step[];
  *
@@ -1011,14 +1067,13 @@ export type Config = {
  *   id: 'my-scenario',
  *   name: 'My Scenario',
  *   steps,
- *   prompt: '...',
+ *   prompt: ({ formData, aiContext }) =>
+ *     `Generate document based on:\n${JSON.stringify({ formData, aiContext }, null, 2)}`,
  *   outputDir: 'docs',
- *   overrides: {
- *     filename: ({ formData }) => {
- *       // formData is now type-safe!
- *       // formData.basicInfo?.projectName is typed as string | undefined
- *       return `${formData.basicInfo?.projectName ?? 'untitled'}.md`;
- *     },
+ *   filename: ({ formData }) => {
+ *     // formData is now type-safe!
+ *     // formData.basicInfo?.projectName is typed as string | undefined
+ *     return `${formData.basicInfo?.projectName ?? 'untitled'}.md`;
  *   },
  * });
  *
@@ -1033,8 +1088,8 @@ export function defineScenario<const TSteps extends readonly Step[]>(
     steps: TSteps;
     prompt: ScenarioPrompt<InferFormDataFromSteps<TSteps>>;
     outputDir?: string;
+    filename?: ScenarioFilename<InferFormDataFromSteps<TSteps>>;
     hooks?: ScenarioHooks<InferFormDataFromSteps<TSteps>>;
-    overrides?: ScenarioOverrides<InferFormDataFromSteps<TSteps>>;
   },
 ): Scenario {
   return scenario as unknown as Scenario;

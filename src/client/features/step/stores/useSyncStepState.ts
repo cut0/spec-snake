@@ -1,39 +1,39 @@
 import { useCallback, useMemo } from 'react';
 
-import type { Section } from '../../../../definitions';
-import { getSectionStatus } from '../../section/services';
+import type { Step } from '../../../../definitions';
+import { getStepStatus } from '../services';
 
 import { getFormKey, useStepFormStoreBase } from './step-form';
 
 type UseSyncStepStateOptions = {
   formKey?: string;
-  section: Section;
+  step: Step;
 };
 
 export const useSyncStepState = ({
   formKey,
-  section,
+  step,
 }: UseSyncStepStateOptions) => {
   const key = useMemo(() => getFormKey(formKey), [formKey]);
-  const sectionValue = useStepFormStoreBase(
-    (state) => state.forms[key]?.values[section.name],
+  const stepValue = useStepFormStoreBase(
+    (state) => state.forms[key]?.values[step.name],
   );
   const setSectionValue = useStepFormStoreBase(
     (state) => state.setSectionValue,
   );
   const setError = useStepFormStoreBase((state) => state.setError);
 
-  const updateSectionValue = useCallback(
+  const updateStepValue = useCallback(
     (value: unknown) => {
-      setSectionValue(key, section.name, value);
-      const hasError = getSectionStatus(section, value) === 'error';
-      setError(key, section.name, hasError);
+      setSectionValue(key, step.name, value);
+      const hasError = getStepStatus(step, value) === 'error';
+      setError(key, step.name, hasError);
     },
-    [key, section, setSectionValue, setError],
+    [key, step, setSectionValue, setError],
   );
 
   return {
-    sectionValue,
-    updateSectionValue,
+    stepValue,
+    updateStepValue,
   };
 };

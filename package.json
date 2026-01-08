@@ -29,7 +29,7 @@
     "build:cli": "tsx scripts/build-cli.ts",
     "build:client": "vite build",
     "build:types": "tsc src/types.ts --declaration --outDir dist --skipLibCheck --module ESNext --moduleResolution bundler --target ES2022",
-    "dev": "NODE_ENV=development SPEC_SNAKE_CONFIG=examples/local/spec-snake.config.ts vite",
+    "dev": "NODE_ENV=development SPEC_SNAKE_CONFIG=examples/local/spec-snake-ja.config.ts vite",
     "prd": "pnpm build && pnpm build:client && node dist/cli.js",
     "i18n": "lingui extract && lingui compile",
     "i18n:compile": "lingui compile",

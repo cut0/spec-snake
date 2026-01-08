@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { InputData, Scenario } from '../../definitions';
+import type { AiContext, Scenario } from '../../definitions';
 import {
   type DocumentWithMetadata,
   addMetadataToContent,
@@ -96,21 +96,21 @@ export const getFilename = (
   scenarioId: string,
   content: string,
   formData: Record<string, unknown>,
-  inputData: InputData,
+  aiContext: AiContext,
 ): string => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 
-  const filenameOverride = scenario.overrides?.filename;
-  if (filenameOverride != null) {
-    return typeof filenameOverride === 'function'
-      ? filenameOverride({
+  const filename = scenario.filename;
+  if (filename != null) {
+    return typeof filename === 'function'
+      ? filename({
           scenarioId,
           timestamp,
           content,
           formData,
-          inputData,
+          aiContext,
         })
-      : filenameOverride;
+      : filename;
   }
 
   return `design-doc-${scenarioId}-${timestamp}.md`;

@@ -105,7 +105,8 @@ npx spec-snake-beta start --host 0.0.0.0
 
 設定ファイル例は [`examples/`](./examples/) ディレクトリを参照してください。
 
-- [`examples/spec-snake.ts`](./examples/spec-snake-ja.ts) - 基本的な設定例
+- [`examples/local/spec-snake.config.ts`](./examples/local/spec-snake.config.ts) - 基本的な設定例（英語）
+- [`examples/local/spec-snake-ja.config.ts`](./examples/local/spec-snake-ja.config.ts) - 基本的な設定例（日本語）
 
 また、設定可能な項目は [src/types.ts](./src/types.ts) を参照してください。
 
@@ -124,26 +125,21 @@ export default defineConfig({
           slug: "overview",
           title: "概要",
           description: "プロジェクトの概要",
-          section: {
-            type: "single",
-            name: "overview",
-            fields: [
-              {
-                id: "title",
-                type: "input",
-                label: "タイトル",
-                description: "",
-              },
-            ],
-          },
+          name: "overview",
+          fields: [
+            {
+              id: "title",
+              type: "input",
+              label: "タイトル",
+              description: "",
+            },
+          ],
         },
       ],
       prompt: "...",
       outputDir: "docs",
-      overrides: {
-        filename: ({ formData, timestamp }) =>
-          `${formData.overview?.title ?? "untitled"}-${timestamp}.md`,
-      },
+      filename: ({ formData, timestamp }) =>
+        `${formData.overview?.title ?? "untitled"}-${timestamp}.md`,
     }),
   ],
   permissions: {
@@ -169,16 +165,16 @@ export default defineConfig({
 
 **`Scenario`** - シナリオ定義。各シナリオは 1 つのドキュメントタイプを表す
 
-| プロパティ   | 型                   | 必須 | 説明                                    |
-| ------------ | -------------------- | ---- | --------------------------------------- |
-| `id`         | `string`             | Yes  | URL で使用される一意の識別子            |
-| `name`       | `string`             | Yes  | 表示名                                  |
-| `steps`      | `Step[]`             | Yes  | フォームウィザードのステップ            |
-| `prompt`     | `string \| Function` | Yes  | Claude に送信するプロンプトテンプレート |
-| `outputDir`  | `string`             | No   | ドキュメントの保存先ディレクトリ        |
-| `aiSettings` | `AiSettings`         | No   | Claude Agent SDK の設定                 |
-| `hooks`      | `ScenarioHooks`      | No   | ライフサイクルフック                    |
-| `overrides`  | `ScenarioOverrides`  | No   | デフォルト動作のオーバーライド          |
+| プロパティ   | 型                  | 必須 | 説明                             |
+| ------------ | ------------------- | ---- | -------------------------------- |
+| `id`         | `string`            | Yes  | URL で使用される一意の識別子     |
+| `name`       | `string`            | Yes  | 表示名                           |
+| `steps`      | `Step[]`            | Yes  | フォームウィザードのステップ     |
+| `prompt`     | `Function`          | Yes  | Claude に送信するプロンプト関数  |
+| `outputDir`  | `string`            | No   | ドキュメントの保存先ディレクトリ |
+| `filename`   | `string \| Function`| No   | カスタムファイル名               |
+| `aiSettings` | `AiSettings`        | No   | Claude Agent SDK の設定          |
+| `hooks`      | `ScenarioHooks`     | No   | ライフサイクルフック             |
 
 **`Step`** - マルチステップフォームの各ステップ
 
@@ -187,30 +183,8 @@ export default defineConfig({
 | `slug`        | `string`  | Yes  | URL フレンドリーな識別子             |
 | `title`       | `string`  | Yes  | ステップヘッダーに表示されるタイトル |
 | `description` | `string`  | Yes  | タイトル下に表示される説明文         |
-| `section`     | `Section` | Yes  | ステップのフィールドを含むセクション |
-
-### `Section` - セクションは 2 種類
-
-SingleSection - 1 回だけ入力するフィールドのグループ
-
-```typescript
-{
-  type: 'single',
-  name: 'overview',
-  fields: [...]
-}
-```
-
-ArraySection - 複数のエントリを追加できるフィールドのグループ
-
-```typescript
-{
-  type: 'array',
-  name: 'requirements',
-  fields: [...],
-  minFieldCount: 1  // 最小エントリ数（オプション）
-}
-```
+| `name`        | `string`  | Yes  | formData のキー                      |
+| `fields`      | `Field[]` | Yes  | ステップ内のフィールド配列           |
 
 ### フィールドタイプ
 
@@ -279,6 +253,51 @@ ArraySection - 複数のエントリを追加できるフィールドのグル�
     { type: 'input', id: 'lastName', label: '姓' }
   ]
 }
+```
+
+#### RepeatableLayout - フィールドを繰り返すレイアウト
+
+ユーザーがフィールドまたはグループの複数インスタンスを追加できます。
+
+```typescript
+// 単一フィールドの繰り返し
+{
+  type: 'repeatable',
+  id: 'tags',
+  minCount: 1,  // 最小エントリ数（オプション）
+  field: { type: 'input', id: 'name', label: 'タグ', description: '' }
+}
+// formData: { tags: [{ name: 'タグ1' }, { name: 'タグ2' }] }
+
+// グループの繰り返し（エントリごとに複数フィールド）
+{
+  type: 'repeatable',
+  id: 'libraries',
+  minCount: 1,
+  field: {
+    type: 'group',
+    fields: [
+      { type: 'input', id: 'name', label: 'ライブラリ名', description: '' },
+      { type: 'input', id: 'url', label: 'URL', description: '', inputType: 'url' }
+    ]
+  }
+}
+// formData: { libraries: [{ name: 'React', url: 'https://...' }, ...] }
+```
+
+#### GroupLayout - フィールドを視覚的にグループ化
+
+フィールドを視覚的にグループ化します（繰り返しなし）。グループを繰り返すには RepeatableLayout でラップします。
+
+```typescript
+{
+  type: 'group',
+  fields: [
+    { type: 'input', id: 'firstName', label: '名', description: '' },
+    { type: 'input', id: 'lastName', label: '姓', description: '' }
+  ]
+}
+// formData: { firstName: '...', lastName: '...' }
 ```
 
 ### 条件付きフィールド表示
@@ -360,35 +379,84 @@ ArraySection - 複数のエントリを追加できるフィールドのグル�
 }
 ```
 
-### `scenario.overrides` - デフォルト動作のオーバーライド
+### `scenario.filename` - カスタムファイル名
 
 ```typescript
+// 静的ファイル名
+filename: 'design-doc.md'
+
+// または動的ファイル名
+filename: ({ formData, timestamp }) =>
+  `${formData.project_name}-${timestamp}.md`
+```
+
+### プロンプト関数
+
+プロンプトは `formData` と `aiContext` パラメータを受け取る関数として定義します。
+
+```typescript
+const prompt = ({ formData, aiContext }) => `設計ドキュメントを生成してください。
+
+${JSON.stringify({ formData, aiContext }, null, 2)}`;
+```
+
+#### `formData`
+
+UI からの生のフォームデータ。ステップ名でキー付けされています。ユーザーが入力した実際の値が含まれます。
+
+```typescript
+// formData の構造例
 {
-  // 静的ファイル名
-  filename: 'design-doc.md',
-  // または動的ファイル名
-  filename: ({ formData, timestamp }) =>
-    `${formData.project_name}-${timestamp}.md`
+  overview: {
+    title: "マイプロジェクト",
+    description: "プロジェクトの説明",
+    priority: "high"
+  },
+  modules: {
+    items: [
+      {
+        name: "認証モジュール",
+        features: [
+          { feature_name: "ログイン", feature_description: "ユーザーログイン" }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-### プロンプトテンプレート
+#### `aiContext`
 
-プロンプト内で `{{INPUT_JSON}}` を使用すると、フォームデータが JSON 形式で挿入されます。
+ステップごとに整理されたフィールドのメタデータ（ラベル、説明）。値を重複させずに AI が構造を理解するのに役立ちます。
 
 ```typescript
-const prompt = `以下の入力に基づいて設計ドキュメントを生成してください。
-
-{{INPUT_JSON}}
-
-マークダウン形式で出力してください。`;
+// aiContext の構造例
+{
+  overview: {
+    _step: { title: "概要", description: "プロジェクトの概要" },
+    title: { label: "タイトル", description: "プロジェクト名" },
+    description: { label: "説明", description: "プロジェクトの説明" },
+    priority: { label: "優先度", description: "優先度レベル" }
+  },
+  modules: {
+    _step: { title: "モジュール", description: "モジュール構成" },
+    items: {
+      name: { label: "モジュール名", description: "モジュールの名前" },
+      features: {
+        feature_name: { label: "機能名", description: "機能の名前" },
+        feature_description: { label: "機能説明", description: "機能の詳細" }
+      }
+    }
+  }
+}
 ```
 
-プロンプトは関数としても定義可能です。
+使用例:
 
 ```typescript
-const prompt = ({ formData }) =>
-  `${formData.doc_type} ドキュメントを生成: {{INPUT_JSON}}`;
+const prompt = ({ formData, aiContext }) => `以下の入力に基づいて設計ドキュメントを生成:
+
+${JSON.stringify({ formData, aiContext }, null, 2)}`;
 ```
 
 ## ライセンス

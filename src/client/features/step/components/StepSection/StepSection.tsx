@@ -1,35 +1,35 @@
 import { type FC, type FormEvent, useCallback, useEffect } from 'react';
 import { FormProvider, useForm as useRHFForm, useWatch } from 'react-hook-form';
 
-import type {
-  SingleSection as SingleSectionType,
-  Step,
-} from '../../../../../definitions';
+import type { Field, Step } from '../../../../../definitions';
 import { FieldRenderer } from '../../../form/components/FieldRenderer';
-import { useSyncStepState } from '../../../step/stores/useSyncStepState';
+import { useSyncStepState } from '../../stores/useSyncStepState';
 
-type SingleSectionProps = {
+type StepSectionProps = {
   step: Step;
   formKey?: string;
 };
 
-export const SingleSection: FC<SingleSectionProps> = ({ step, formKey }) => {
-  const section = step.section as SingleSectionType;
-  const { sectionValue, updateSectionValue } = useSyncStepState({
+/**
+ * Renders a step's form fields.
+ * Each step has a name and fields directly on it.
+ */
+export const StepSection: FC<StepSectionProps> = ({ step, formKey }) => {
+  const { stepValue, updateStepValue } = useSyncStepState({
     formKey,
-    section,
+    step,
   });
 
   const methods = useRHFForm({
-    defaultValues: sectionValue as Record<string, unknown>,
+    defaultValues: stepValue as Record<string, unknown>,
   });
 
   const watchedValues = useWatch({ control: methods.control });
 
   // Sync to zustand
   useEffect(() => {
-    updateSectionValue(watchedValues);
-  }, [watchedValues, updateSectionValue]);
+    updateStepValue(watchedValues);
+  }, [watchedValues, updateStepValue]);
 
   const handleSubmit = useCallback((e: FormEvent) => {
     e.preventDefault();
@@ -44,7 +44,7 @@ export const SingleSection: FC<SingleSectionProps> = ({ step, formKey }) => {
       <hr className="mx-6 mt-4 border-gray-200" />
       <FormProvider {...methods}>
         <form className="p-6 space-y-6" onSubmit={handleSubmit}>
-          {section.fields.map((field) => (
+          {step.fields.map((field: Field) => (
             <FieldRenderer
               key={'id' in field ? field.id : field.type}
               field={field}

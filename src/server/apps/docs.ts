@@ -3,7 +3,7 @@ import { createMiddleware } from 'hono/factory';
 import { streamSSE } from 'hono/streaming';
 
 import type { Config } from '../../definitions';
-import { transformFormData } from '../helpers/docs/transform';
+import { buildAiContext } from '../helpers/docs/transform';
 import {
   getDocumentsForScenario,
   getFilename,
@@ -67,10 +67,10 @@ export const createDocsApp = (
   });
 
   app.post('/api/scenarios/:scenarioId/docs/preview', async (c) => {
-    const { scenario, sectionInfoMap } = c.get('scenarioInfo');
+    const { scenario } = c.get('scenarioInfo');
 
     const formData = (await c.req.json()) as Record<string, unknown>;
-    const inputData = transformFormData(formData, sectionInfoMap);
+    const aiContext = buildAiContext(scenario.steps);
 
     return streamSSE(c, async (stream) => {
       let fullContent = '';
@@ -78,7 +78,7 @@ export const createDocsApp = (
       for await (const chunk of generateDesignDocStream({
         scenario,
         formData,
-        inputData,
+        aiContext,
       })) {
         fullContent += chunk.text;
         await stream.writeSSE({
@@ -95,7 +95,7 @@ export const createDocsApp = (
       if (scenario.hooks?.onPreview != null) {
         await scenario.hooks.onPreview({
           formData,
-          inputData,
+          aiContext,
           content: fullContent,
         });
       }
@@ -104,20 +104,20 @@ export const createDocsApp = (
 
   app.post('/api/scenarios/:scenarioId/docs', async (c) => {
     const scenarioId = c.req.param('scenarioId');
-    const { scenario, sectionInfoMap } = c.get('scenarioInfo');
+    const { scenario } = c.get('scenarioInfo');
 
     if (!config.permissions.allowSave) {
       return c.json({ error: 'Save is not allowed' }, 403);
     }
 
     const { content, formData } = (await c.req.json()) as CreateDocBody;
-    const inputData = transformFormData(formData, sectionInfoMap);
+    const aiContext = buildAiContext(scenario.steps);
     const filename = getFilename(
       scenario,
       scenarioId,
       content,
       formData,
-      inputData,
+      aiContext,
     );
     const { outputPath } = await saveDocument({
       scenario,
@@ -133,7 +133,7 @@ export const createDocsApp = (
         filename,
         outputPath,
         formData,
-        inputData,
+        aiContext,
       });
     }
 
@@ -156,14 +156,14 @@ export const createDocsApp = (
   app.put('/api/scenarios/:scenarioId/docs/:filename', async (c) => {
     const scenarioId = c.req.param('scenarioId');
     const filename = c.req.param('filename');
-    const { scenario, sectionInfoMap } = c.get('scenarioInfo');
+    const { scenario } = c.get('scenarioInfo');
 
     if (!config.permissions.allowSave) {
       return c.json({ error: 'Save is not allowed' }, 403);
     }
 
     const { content, formData } = (await c.req.json()) as UpdateDocBody;
-    const inputData = transformFormData(formData, sectionInfoMap);
+    const aiContext = buildAiContext(scenario.steps);
     const { outputPath } = await saveDocument({
       scenario,
       scenarioId,
@@ -178,7 +178,7 @@ export const createDocsApp = (
         filename,
         outputPath,
         formData,
-        inputData,
+        aiContext,
       });
     }
 

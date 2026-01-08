@@ -1,6 +1,7 @@
 import { createFileRoute, notFound } from '@tanstack/react-router';
 import * as v from 'valibot';
 
+import { buildFormDefaultValues } from '../../../../../features/form/services';
 import { scenarioQueryOptions } from '../../../../../features/scenario/queries/fetchScenarioQueryOption';
 import { initializeFormIfNeeded } from '../../../../../features/step/stores/step-form';
 import { queryClient } from '../../../../../query';
@@ -34,7 +35,7 @@ export const Route = createFileRoute('/scenarios/$scenarioId/docs/new/')({
     }
 
     // Initialize form (only if needed)
-    initializeFormIfNeeded({ initialValues: data.formDefaultValues });
+    initializeFormIfNeeded({ initialValues: buildFormDefaultValues(steps) });
 
     return {
       stepIndex,
