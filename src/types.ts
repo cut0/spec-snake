@@ -536,8 +536,6 @@ export type ScenarioBase = {
   name: string;
   /** Steps that make up the scenario's form wizard */
   steps: Step[];
-  /** Prompt template sent to Claude (use {{INPUT_JSON}} placeholder) */
-  prompt: string;
   /**
    * AI settings for Claude Agent SDK
    * @see AiSettings
@@ -546,16 +544,15 @@ export type ScenarioBase = {
 };
 
 /**
- * InputData type (transformed form data sent to Claude)
+ * PromptContext type (transformed form data sent to Claude)
  *
- * This is the structure of `inputData` passed to hooks, prompts, and overrides.
- * It's the same as `{{INPUT_JSON}}` in prompts.
+ * This is the structure of `promptContext` passed to hooks, prompts, and overrides.
  */
-export type InputData = {
-  items: Array<{
+export type PromptContext = {
+  steps: Array<{
     title: string;
     description: string;
-    values:
+    fields:
       | Array<{ label: string; description: string; value: unknown }>
       | Array<Array<{ label: string; description: string; value: unknown }>>;
   }>;
@@ -577,12 +574,12 @@ export type ScenarioHooks<
    * Use for logging, analytics, or transforming the preview content.
    *
    * @param params.formData - The raw form data from the UI
-   * @param params.inputData - The transformed data sent to Claude (same as {{INPUT_JSON}})
+   * @param params.promptContext - The transformed data sent to Claude
    * @param params.content - The generated markdown content
    */
   onPreview?: (params: {
     formData: TFormData;
-    inputData: InputData;
+    promptContext: PromptContext;
     content: string;
   }) => Promise<void>;
 
@@ -595,14 +592,14 @@ export type ScenarioHooks<
    * @param params.filename - The filename that was used
    * @param params.outputPath - Full path to the saved file
    * @param params.formData - The raw form data from the UI
-   * @param params.inputData - The transformed data sent to Claude (same as {{INPUT_JSON}})
+   * @param params.promptContext - The transformed data sent to Claude
    */
   onSave?: (params: {
     content: string;
     filename: string;
     outputPath: string;
     formData: TFormData;
-    inputData: InputData;
+    promptContext: PromptContext;
   }) => Promise<void>;
 };
 
@@ -637,36 +634,27 @@ export type ScenarioOverrides<
         timestamp: string;
         content: string;
         formData: TFormData;
-        inputData: InputData;
+        promptContext: PromptContext;
       }) => string);
 };
 
 /**
- * Prompt template type
+ * Prompt function type
  *
- * Can be a static string or a function for dynamic prompt generation.
- * Use `{{INPUT_JSON}}` in the template to inject form data.
+ * A function that generates the prompt string.
+ * Use `promptContext` parameter directly to include form data in the prompt.
  *
  * @typeParam TFormData - Type of the raw form data from UI
  *
  * @example
  * ```ts
- * // Static prompt
- * prompt: `Generate a design doc based on: {{INPUT_JSON}}`
- *
- * // Dynamic prompt
- * prompt: ({ formData, inputData }) =>
- *   `Create a ${formData.doc_type} document for: {{INPUT_JSON}}`
+ * prompt: ({ formData, promptContext }) =>
+ *   `Create a ${formData.doc_type} document based on:\n${JSON.stringify(promptContext, null, 2)}`
  * ```
  */
 export type ScenarioPrompt<
   TFormData extends Record<string, unknown> = Record<string, unknown>,
-> =
-  | string
-  | ((params: {
-      formData: TFormData;
-      inputData: InputData;
-    }) => string);
+> = (params: { formData: TFormData; promptContext: PromptContext }) => string;
 
 /**
  * Complete scenario definition
@@ -682,7 +670,8 @@ export type ScenarioPrompt<
  *   id: 'design-doc',
  *   name: 'Design Document',
  *   steps: [...],
- *   prompt: 'Generate a design doc based on: {{INPUT_JSON}}',
+ *   prompt: ({ promptContext }) =>
+ *     `Generate a design doc based on:\n${JSON.stringify(promptContext, null, 2)}`,
  *   outputDir: './docs/designs',
  *   aiSettings: {
  *     model: 'claude-sonnet-4-5'
@@ -697,8 +686,8 @@ export type ScenarioPrompt<
  */
 export type Scenario<
   TFormData extends Record<string, unknown> = Record<string, unknown>,
-> = Omit<ScenarioBase, 'prompt'> & {
-  /** Prompt template (static string or dynamic function) */
+> = ScenarioBase & {
+  /** Prompt template function */
   prompt: ScenarioPrompt<TFormData>;
   /** Directory where generated documents are saved */
   outputDir?: string;

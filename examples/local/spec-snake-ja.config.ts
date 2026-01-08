@@ -143,18 +143,22 @@ const steps = [
   },
 ] as const satisfies Step[];
 
-const prompt = `あなたはテクニカルライターアシスタントです。以下の入力に基づいて設計ドキュメントを生成してください。
+const prompt = ({
+  promptContext,
+}: {
+  promptContext: unknown;
+}) => `あなたはテクニカルライターアシスタントです。以下の入力に基づいて設計ドキュメントを生成してください。
 
 ## 入力データ構造
 
 入力は以下の構造を持つJSONです:
 \`\`\`json
 {
-  "items": [
+  "steps": [
     {
-      "title": "セクションタイトル",
-      "description": "セクションの説明",
-      "values": [
+      "title": "ステップタイトル",
+      "description": "ステップの説明",
+      "fields": [
         { "label": "フィールド名", "description": "フィールドの説明", "value": "入力値" }
       ]
     }
@@ -201,7 +205,7 @@ const prompt = `あなたはテクニカルライターアシスタントです�
 
 ## 入力データ
 
-{{INPUT_JSON}}
+${JSON.stringify(promptContext, null, 2)}
 
 上記の入力に基づいて設計ドキュメントを生成してください。`;
 

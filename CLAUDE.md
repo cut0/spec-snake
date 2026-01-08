@@ -91,7 +91,7 @@ pnpm release                        # Changesets publish
 - `defineScenario()` and `defineConfig()` helpers for type-safe configuration
 - `onPreview`/`onSave` hooks for custom behavior
 - `overrides.filename` for custom document naming
-- `{{INPUT_JSON}}` in prompts gets replaced with transformed form data
+- Prompt is a function receiving `{ formData, promptContext }` parameters
 - `InferFormDataFromSteps<T>` utility type for type-safe formData access
 
 **Field Types**:

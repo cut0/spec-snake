@@ -143,18 +143,24 @@ const steps = [
   },
 ] as const satisfies Step[];
 
-const prompt = `You are a technical writer assistant. Generate a design document based on the following input.
+const prompt = ({
+  promptContext,
+  formData,
+}: {
+  promptContext: unknown;
+  formData: unknown;
+}) => `You are a technical writer assistant. Generate a design document based on the following input.
 
 ## Input Data Structure
 
 The input is JSON with the following structure:
 \`\`\`json
 {
-  "items": [
+  "steps": [
     {
-      "title": "Section title",
-      "description": "Section description",
-      "values": [
+      "title": "Step title",
+      "description": "Step description",
+      "fields": [
         { "label": "Field name", "description": "Field description", "value": "Input value" }
       ]
     }
@@ -208,7 +214,7 @@ Generate a Markdown design document with:
 
 ## Input Data
 
-{{INPUT_JSON}}`;
+${JSON.stringify(promptContext, null, 2)}`;
 
 // Use defineConfig and defineScenario for type-safe configuration
 const config = defineConfig({

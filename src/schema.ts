@@ -207,7 +207,9 @@ export const ScenarioBaseSchema = v.object({
   id: v.string(),
   name: v.string(),
   steps: v.array(StepSchema),
-  prompt: v.unknown(),
+  prompt: v.custom<
+    (params: { formData: unknown; promptContext: unknown }) => string
+  >((value) => typeof value === 'function'),
   aiSettings: AiSettingsSchema,
 });
 

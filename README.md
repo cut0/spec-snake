@@ -171,7 +171,7 @@ export default defineConfig({
 | `id`         | `string`             | Yes      | Unique identifier used in URL  |
 | `name`       | `string`             | Yes      | Display name                   |
 | `steps`      | `Step[]`             | Yes      | Form wizard steps              |
-| `prompt`     | `string \| Function` | Yes      | Prompt template sent to Claude |
+| `prompt`     | `Function`           | Yes      | Prompt function sent to Claude |
 | `outputDir`  | `string`             | No       | Directory for saving documents |
 | `aiSettings` | `AiSettings`         | No       | Claude Agent SDK settings      |
 | `hooks`      | `ScenarioHooks`      | No       | Lifecycle hooks                |
@@ -369,23 +369,83 @@ Fields can be conditionally shown/hidden based on other field values using the `
 }
 ```
 
-### Prompt Template
+### Prompt Function
 
-Use `{{INPUT_JSON}}` in prompts to insert form data as JSON.
+Prompts are defined as functions that receive `formData` and `promptContext` parameters.
 
 ```typescript
-const prompt = `Generate a design document based on the following input.
+const prompt = ({ formData, promptContext }) => `Generate a design document.
 
-{{INPUT_JSON}}
-
-Output in markdown format.`;
+${JSON.stringify(promptContext, null, 2)}`;
 ```
 
-Prompts can also be defined as functions.
+#### `formData`
+
+Raw form data from UI, keyed by section name. Useful for accessing specific field values directly.
+
+```typescript
+// Example formData structure
+{
+  overview: {
+    title: "My Project",
+    description: "Project description",
+    priority: "high"
+  },
+  requirements: [
+    { name: "Feature A", priority: "high" },
+    { name: "Feature B", priority: "medium" }
+  ]
+}
+```
+
+Usage example:
 
 ```typescript
 const prompt = ({ formData }) =>
-  `Generate ${formData.doc_type} document: {{INPUT_JSON}}`;
+  `Generate a ${formData.overview?.priority} priority document for ${formData.overview?.title}.`;
+```
+
+#### `promptContext`
+
+Transformed form data with step/field metadata. Includes labels and descriptions, suitable for AI prompts.
+
+```typescript
+// Example promptContext structure
+{
+  steps: [
+    {
+      title: "Overview",
+      description: "Project overview",
+      fields: [
+        { label: "Title", description: "Project title", value: "My Project" },
+        { label: "Description", description: "Project description", value: "..." },
+        { label: "Priority", description: "Priority level", value: "high" }
+      ]
+    },
+    {
+      title: "Requirements",
+      description: "List requirements",
+      fields: [
+        [
+          { label: "Name", description: "Requirement name", value: "Feature A" },
+          { label: "Priority", description: "Priority", value: "high" }
+        ],
+        [
+          { label: "Name", description: "Requirement name", value: "Feature B" },
+          { label: "Priority", description: "Priority", value: "medium" }
+        ]
+      ]
+    }
+  ]
+}
+```
+
+Usage example:
+
+```typescript
+const prompt = ({ promptContext }) => `Generate a design document based on:
+
+${JSON.stringify(promptContext, null, 2)}`;
 ```
 
 ## License

@@ -70,7 +70,7 @@ export const createDocsApp = (
     const { scenario, sectionInfoMap } = c.get('scenarioInfo');
 
     const formData = (await c.req.json()) as Record<string, unknown>;
-    const inputData = transformFormData(formData, sectionInfoMap);
+    const promptContext = transformFormData(formData, sectionInfoMap);
 
     return streamSSE(c, async (stream) => {
       let fullContent = '';
@@ -78,7 +78,7 @@ export const createDocsApp = (
       for await (const chunk of generateDesignDocStream({
         scenario,
         formData,
-        inputData,
+        promptContext,
       })) {
         fullContent += chunk.text;
         await stream.writeSSE({
@@ -95,7 +95,7 @@ export const createDocsApp = (
       if (scenario.hooks?.onPreview != null) {
         await scenario.hooks.onPreview({
           formData,
-          inputData,
+          promptContext,
           content: fullContent,
         });
       }
@@ -111,13 +111,13 @@ export const createDocsApp = (
     }
 
     const { content, formData } = (await c.req.json()) as CreateDocBody;
-    const inputData = transformFormData(formData, sectionInfoMap);
+    const promptContext = transformFormData(formData, sectionInfoMap);
     const filename = getFilename(
       scenario,
       scenarioId,
       content,
       formData,
-      inputData,
+      promptContext,
     );
     const { outputPath } = await saveDocument({
       scenario,
@@ -133,7 +133,7 @@ export const createDocsApp = (
         filename,
         outputPath,
         formData,
-        inputData,
+        promptContext,
       });
     }
 
@@ -163,7 +163,7 @@ export const createDocsApp = (
     }
 
     const { content, formData } = (await c.req.json()) as UpdateDocBody;
-    const inputData = transformFormData(formData, sectionInfoMap);
+    const promptContext = transformFormData(formData, sectionInfoMap);
     const { outputPath } = await saveDocument({
       scenario,
       scenarioId,
@@ -178,7 +178,7 @@ export const createDocsApp = (
         filename,
         outputPath,
         formData,
-        inputData,
+        promptContext,
       });
     }
 

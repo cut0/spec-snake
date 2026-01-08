@@ -169,16 +169,16 @@ export default defineConfig({
 
 **`Scenario`** - シナリオ定義。各シナリオは 1 つのドキュメントタイプを表す
 
-| プロパティ   | 型                   | 必須 | 説明                                    |
-| ------------ | -------------------- | ---- | --------------------------------------- |
-| `id`         | `string`             | Yes  | URL で使用される一意の識別子            |
-| `name`       | `string`             | Yes  | 表示名                                  |
-| `steps`      | `Step[]`             | Yes  | フォームウィザードのステップ            |
-| `prompt`     | `string \| Function` | Yes  | Claude に送信するプロンプトテンプレート |
-| `outputDir`  | `string`             | No   | ドキュメントの保存先ディレクトリ        |
-| `aiSettings` | `AiSettings`         | No   | Claude Agent SDK の設定                 |
-| `hooks`      | `ScenarioHooks`      | No   | ライフサイクルフック                    |
-| `overrides`  | `ScenarioOverrides`  | No   | デフォルト動作のオーバーライド          |
+| プロパティ   | 型                  | 必須 | 説明                             |
+| ------------ | ------------------- | ---- | -------------------------------- |
+| `id`         | `string`            | Yes  | URL で使用される一意の識別子     |
+| `name`       | `string`            | Yes  | 表示名                           |
+| `steps`      | `Step[]`            | Yes  | フォームウィザードのステップ     |
+| `prompt`     | `Function`          | Yes  | Claude に送信するプロンプト関数  |
+| `outputDir`  | `string`            | No   | ドキュメントの保存先ディレクトリ |
+| `aiSettings` | `AiSettings`        | No   | Claude Agent SDK の設定          |
+| `hooks`      | `ScenarioHooks`     | No   | ライフサイクルフック             |
+| `overrides`  | `ScenarioOverrides` | No   | デフォルト動作のオーバーライド   |
 
 **`Step`** - マルチステップフォームの各ステップ
 
@@ -372,23 +372,92 @@ ArraySection - 複数のエントリを追加できるフィールドのグル�
 }
 ```
 
-### プロンプトテンプレート
+### プロンプト関数
 
-プロンプト内で `{{INPUT_JSON}}` を使用すると、フォームデータが JSON 形式で挿入されます。
+プロンプトは `formData` と `promptContext` パラメータを受け取る関数として定義します。
 
 ```typescript
-const prompt = `以下の入力に基づいて設計ドキュメントを生成してください。
+const prompt = ({
+  formData,
+  promptContext,
+}) => `設計ドキュメントを生成してください。
 
-{{INPUT_JSON}}
-
-マークダウン形式で出力してください。`;
+${JSON.stringify(promptContext, null, 2)}`;
 ```
 
-プロンプトは関数としても定義可能です。
+#### `formData`
+
+UI からの生のフォームデータ。セクション名でキー付けされています。特定のフィールド値に直接アクセスする場合に便利です。
+
+```typescript
+// formData の構造例
+{
+  overview: {
+    title: "マイプロジェクト",
+    description: "プロジェクトの説明",
+    priority: "high"
+  },
+  requirements: [
+    { name: "機能A", priority: "high" },
+    { name: "機能B", priority: "medium" }
+  ]
+}
+```
+
+使用例:
 
 ```typescript
 const prompt = ({ formData }) =>
-  `${formData.doc_type} ドキュメントを生成: {{INPUT_JSON}}`;
+  `${formData.overview?.title} の ${formData.overview?.priority} 優先度ドキュメントを生成。`;
+```
+
+#### `promptContext`
+
+ステップ/フィールドのメタデータを含む変換済みフォームデータ。ラベルや説明が含まれており、AI プロンプトに適しています。
+
+```typescript
+// promptContext の構造例
+{
+  steps: [
+    {
+      title: "概要",
+      description: "プロジェクトの概要",
+      fields: [
+        {
+          label: "タイトル",
+          description: "プロジェクト名",
+          value: "マイプロジェクト",
+        },
+        { label: "説明", description: "プロジェクトの説明", value: "..." },
+        { label: "優先度", description: "優先度レベル", value: "high" },
+      ],
+    },
+    {
+      title: "要件",
+      description: "要件一覧",
+      fields: [
+        [
+          { label: "名前", description: "要件名", value: "機能A" },
+          { label: "優先度", description: "優先度", value: "high" },
+        ],
+        [
+          { label: "名前", description: "要件名", value: "機能B" },
+          { label: "優先度", description: "優先度", value: "medium" },
+        ],
+      ],
+    },
+  ];
+}
+```
+
+使用例:
+
+```typescript
+const prompt = ({
+  promptContext,
+}) => `以下の入力に基づいて設計ドキュメントを生成:
+
+${JSON.stringify(promptContext, null, 2)}`;
 ```
 
 ## ライセンス

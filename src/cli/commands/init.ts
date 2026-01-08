@@ -60,8 +60,8 @@ export default defineConfig({
           return \`\${params.timestamp}.md\`;
         },
       },
-      prompt:
-        'Generate a design doc based on the following input: {{INPUT_JSON}}',
+      prompt: ({ promptContext }) =>
+        \`Generate a design doc based on the following input:\n\${JSON.stringify(promptContext, null, 2)}\`,
     }),
   ],
   permissions: {

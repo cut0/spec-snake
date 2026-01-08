@@ -1,7 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-import type { InputData, Scenario } from '../../definitions';
+import type { PromptContext, Scenario } from '../../definitions';
 import {
   type DocumentWithMetadata,
   addMetadataToContent,
@@ -96,7 +96,7 @@ export const getFilename = (
   scenarioId: string,
   content: string,
   formData: Record<string, unknown>,
-  inputData: InputData,
+  promptContext: PromptContext,
 ): string => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 
@@ -108,7 +108,7 @@ export const getFilename = (
           timestamp,
           content,
           formData,
-          inputData,
+          promptContext,
         })
       : filenameOverride;
   }

@@ -1,11 +1,11 @@
-import type { InputData } from '../../../definitions';
+import type { PromptContext } from '../../../definitions';
 import type { SectionInfo } from '../scenarios/build-section-info';
 
 export const transformFormData = (
   body: Record<string, unknown>,
   sectionInfoMap: Map<string, SectionInfo>,
-): InputData => {
-  const items: InputData['items'] = [];
+): PromptContext => {
+  const steps: PromptContext['steps'] = [];
 
   for (const [sectionName, sectionValue] of Object.entries(body)) {
     const sectionInfo = sectionInfoMap.get(sectionName);
@@ -16,10 +16,10 @@ export const transformFormData = (
 
     const fieldInfoMap = new Map(sectionInfo.fields.map((f) => [f.id, f]));
 
-    const values = (
+    const fields = (
       Array.isArray(sectionValue) ? sectionValue : [sectionValue]
     ).map((item: Record<string, unknown>) => {
-      const itemValues: Array<{
+      const itemFields: Array<{
         label: string;
         description: string;
         value: unknown;
@@ -35,17 +35,17 @@ export const transformFormData = (
           }
           return null;
         })
-        .filter((value) => value != null);
+        .filter((v) => v != null);
 
-      return itemValues;
+      return itemFields;
     });
 
-    items.push({
+    steps.push({
       title: sectionInfo.title,
       description: sectionInfo.description,
-      values,
+      fields,
     });
   }
 
-  return { items };
+  return { steps };
 };
