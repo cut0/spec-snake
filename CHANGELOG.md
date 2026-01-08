@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.6
+
+### Patch Changes
+
+- f3650d7: feat: add conditional field display with `when` property
+
 ## 0.0.1-beta.5
 
 ### Patch Changes
