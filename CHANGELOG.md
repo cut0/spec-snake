@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.8
+
+### Patch Changes
+
+- fc3460c: refactor: simplify prompt API and rename InputData to PromptContext
+
 ## 0.0.1-beta.7
 
 ### Patch Changes
