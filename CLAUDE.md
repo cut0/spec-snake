@@ -39,13 +39,12 @@ pnpm release                        # Changesets publish
 - `src/client/` - React app with TanStack Router (file-based routing in routes/)
   - `src/client/locales/` - i18n translation files (.po files, .ts compiled)
   - `src/client/features/` - Feature modules:
-    - `form/` - Form components (FieldRenderer, Input, Select, Checkbox, Textarea) and services
-    - `section/` - Section components (ArraySection, SingleSection) and services
-    - `step/` - Step UI (MobileDrawer, StepAside, StepNavigation, StepProgress) and stores
+    - `form/` - Form components (FieldRenderer, GroupFieldRenderer, RepeatableFieldRenderer, Input, Select, Checkbox, Textarea) and services
+    - `step/` - Step UI (StepSection, MobileDrawer, StepAside, StepNavigation, StepProgress) and stores
     - `docs/` - Document handling (preview, mutations, queries)
     - `scenario/` - Scenario queries
     - `snackbar/` - Toast notifications
-- `src/types.ts` - Core type definitions (Config, Scenario, Section, Field types)
+- `src/types.ts` - Core type definitions (Config, Scenario, Step, Field types)
 - `src/schema.ts` - Valibot validation schemas
 - `src/definitions.ts` - Re-exports from types.ts and schema.ts
 - `examples/` - Sample config directories for development (`local/`, `docker/`)
@@ -90,7 +89,7 @@ pnpm release                        # Changesets publish
 - Users define scenarios in config.ts with steps, prompts, hooks
 - `defineScenario()` and `defineConfig()` helpers for type-safe configuration
 - `onPreview`/`onSave` hooks for custom behavior
-- `overrides.filename` for custom document naming
+- `filename` for custom document naming
 - Prompt is a function receiving `{ formData, promptContext }` parameters
 - `InferFormDataFromSteps<T>` utility type for type-safe formData access
 
@@ -101,6 +100,8 @@ pnpm release                        # Changesets publish
 - `select` - Dropdown with options
 - `checkbox` - Boolean toggle
 - `grid` - Layout for arranging fields in columns
+- `repeatable` - Layout for repeating fields (single field or group)
+- `group` - Visual grouping of fields (used inside repeatable for multiple fields per entry)
 
 **Conditional Field Display** (`when` property):
 
@@ -108,10 +109,11 @@ pnpm release                        # Changesets publish
 - Function form: `(formData) => formData.priority === 'high' && formData.type === 'feature'`
 - Hidden fields are excluded from validation and form submission
 
-**Section Types**:
+**Step Structure**:
 
-- `single` - One set of fields (e.g., overview section)
-- `array` - Multiple entries with same fields (e.g., library list)
+- `Step` has `name` and `fields` directly (no `section` wrapper)
+- `name` is used as the key in formData
+- `fields` is an array of Field types (form fields and layouts)
 
 ### File Conventions
 

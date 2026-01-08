@@ -2,17 +2,14 @@ import { queryOptions } from '@tanstack/react-query';
 
 import type { Permissions, Scenario } from '../../../../definitions';
 
-export type ScenarioWithDefaults = {
+export type ScenarioData = {
   scenario: Scenario;
-  formDefaultValues: Record<string, unknown>;
   permissions: Permissions;
 };
 
-type ScenarioResponse = ScenarioWithDefaults;
+type ScenarioResponse = ScenarioData;
 
-const fetchScenario = async (
-  scenarioId: string,
-): Promise<ScenarioWithDefaults> => {
+const fetchScenario = async (scenarioId: string): Promise<ScenarioData> => {
   const response = await fetch(
     `/api/scenarios/${encodeURIComponent(scenarioId)}`,
   );

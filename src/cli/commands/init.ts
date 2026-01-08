@@ -19,47 +19,40 @@ export default defineConfig({
           slug: 'overview',
           title: 'Overview',
           description: 'Basic information about the feature',
-          section: {
-            type: 'single',
-            name: 'overview',
-            fields: [
-              {
-                type: 'input',
-                id: 'title',
-                label: 'Title',
-                description: 'Feature title',
-                placeholder: 'Enter feature title',
-                required: true,
-              },
-              {
-                type: 'textarea',
-                id: 'description',
-                label: 'Description',
-                description: 'Detailed description of the feature',
-                placeholder: 'Describe the feature...',
-                rows: 4,
-              },
-              {
-                type: 'select',
-                id: 'priority',
-                label: 'Priority',
-                description: 'Feature priority level',
-                placeholder: 'Select priority',
-                options: [
-                  { value: 'high', label: 'High' },
-                  { value: 'medium', label: 'Medium' },
-                  { value: 'low', label: 'Low' },
-                ],
-              },
-            ],
-          },
+          name: 'overview',
+          fields: [
+            {
+              type: 'input',
+              id: 'title',
+              label: 'Title',
+              description: 'Feature title',
+              placeholder: 'Enter feature title',
+              required: true,
+            },
+            {
+              type: 'textarea',
+              id: 'description',
+              label: 'Description',
+              description: 'Detailed description of the feature',
+              placeholder: 'Describe the feature...',
+              rows: 4,
+            },
+            {
+              type: 'select',
+              id: 'priority',
+              label: 'Priority',
+              description: 'Feature priority level',
+              placeholder: 'Select priority',
+              options: [
+                { value: 'high', label: 'High' },
+                { value: 'medium', label: 'Medium' },
+                { value: 'low', label: 'Low' },
+              ],
+            },
+          ],
         },
       ],
-      overrides: {
-        filename: (params) => {
-          return \`\${params.timestamp}.md\`;
-        },
-      },
+      filename: ({ timestamp }) => \`\${timestamp}.md\`,
       prompt: ({ promptContext }) =>
         \`Generate a design doc based on the following input:\n\${JSON.stringify(promptContext, null, 2)}\`,
     }),

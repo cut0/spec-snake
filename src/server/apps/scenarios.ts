@@ -1,16 +1,15 @@
 import { Hono } from 'hono';
 
 import type { Config, Scenario } from '../../definitions';
-import { buildFormDefaultValues } from '../helpers/scenarios/build-form-defaults';
-import type { buildSectionInfoMap } from '../helpers/scenarios/build-section-info';
+import type { buildStepInfoMap } from '../helpers/scenarios/build-step-info';
 
 export type ScenarioInfo = {
-  sectionInfoMap: ReturnType<typeof buildSectionInfoMap>;
+  stepInfoMap: ReturnType<typeof buildStepInfoMap>;
 };
 
 export type ScenarioInfoMapEntry = {
   scenario: Scenario;
-  sectionInfoMap: ReturnType<typeof buildSectionInfoMap>;
+  stepInfoMap: ReturnType<typeof buildStepInfoMap>;
 };
 
 export const createScenariosApp = (
@@ -35,13 +34,8 @@ export const createScenariosApp = (
       return c.json({ error: 'Scenario not found' }, 404);
     }
 
-    const formDefaultValues = buildFormDefaultValues(
-      scenarioInfo.scenario.steps,
-    );
-
     return c.json({
       scenario: scenarioInfo.scenario,
-      formDefaultValues,
       permissions: config.permissions,
     });
   });

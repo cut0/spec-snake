@@ -16,115 +16,211 @@ const steps = [
     slug: 'overview',
     title: 'Overview',
     description: 'Basic information about the feature',
-    section: {
-      type: 'single',
-      name: 'overview',
-      fields: [
-        {
-          type: 'input',
-          id: 'title',
-          label: 'Title',
-          description: 'Feature title',
-          placeholder: 'Enter feature title',
-          required: true,
-        },
-        {
-          type: 'textarea',
-          id: 'description',
-          label: 'Description',
-          description: 'Detailed description of the feature',
-          placeholder: 'Describe the feature...',
-          rows: 4,
-        },
-        {
-          type: 'select',
-          id: 'priority',
-          label: 'Priority',
-          description: 'Feature priority level',
-          placeholder: 'Select priority',
-          options: priorityOptions,
-        },
-      ],
-    },
+    name: 'overview',
+    fields: [
+      {
+        type: 'input',
+        id: 'title',
+        label: 'Title',
+        description: 'Feature title',
+        placeholder: 'Enter feature title',
+        required: true,
+      },
+      {
+        type: 'textarea',
+        id: 'description',
+        label: 'Description',
+        description: 'Detailed description of the feature',
+        placeholder: 'Describe the feature...',
+        rows: 4,
+      },
+      {
+        type: 'select',
+        id: 'priority',
+        label: 'Priority',
+        description: 'Feature priority level',
+        placeholder: 'Select priority',
+        options: priorityOptions,
+      },
+      // Conditional field: only shown when priority is 'high'
+      {
+        type: 'input',
+        id: 'deadline',
+        label: 'Deadline',
+        description: 'Target completion date (required for high priority)',
+        placeholder: 'YYYY-MM-DD',
+        inputType: 'date',
+        required: true,
+        when: { field: 'priority', is: 'high' },
+      },
+      // Conditional field: shown when priority is 'high' or 'medium'
+      {
+        type: 'textarea',
+        id: 'risk_assessment',
+        label: 'Risk Assessment',
+        description: 'Potential risks and mitigation strategies',
+        placeholder: 'Describe potential risks...',
+        rows: 3,
+        when: { field: 'priority', is: ['high', 'medium'] },
+      },
+    ],
   },
   {
     slug: 'design',
     title: 'Design',
     description: 'Design references and mockups',
-    section: {
-      type: 'single',
-      name: 'design',
-      fields: [
-        {
-          type: 'input',
-          id: 'figma_link',
-          label: 'Figma Link',
-          description: 'Link to Figma design file or frame',
-          placeholder: 'https://www.figma.com/design/...',
-          inputType: 'url',
-          required: true,
-        },
-        {
-          type: 'textarea',
-          id: 'design_notes',
-          label: 'Design Notes',
-          description: 'Additional notes about the design',
-          placeholder: 'Any specific design considerations...',
-          rows: 3,
-        },
-      ],
-    },
+    name: 'design',
+    fields: [
+      {
+        type: 'input',
+        id: 'figma_link',
+        label: 'Figma Link',
+        description: 'Link to Figma design file or frame',
+        placeholder: 'https://www.figma.com/design/...',
+        inputType: 'url',
+        required: true,
+      },
+      {
+        type: 'textarea',
+        id: 'design_notes',
+        label: 'Design Notes',
+        description: 'Additional notes about the design',
+        placeholder: 'Any specific design considerations...',
+        rows: 3,
+      },
+    ],
   },
   {
     slug: 'libraries',
     title: 'Libraries',
     description: 'External libraries and dependencies',
-    section: {
-      type: 'array',
-      name: 'libraries',
-      fields: [
-        {
-          type: 'input',
-          id: 'name',
-          label: 'Library Name',
-          description: 'Name of the library',
-          placeholder: 'e.g., react-query, zod',
-          required: true,
+    name: 'libraries',
+    fields: [
+      {
+        type: 'repeatable',
+        id: 'items',
+        minCount: 1,
+        field: {
+          type: 'group',
+          fields: [
+            {
+              type: 'input',
+              id: 'name',
+              label: 'Library Name',
+              description: 'Name of the library',
+              placeholder: 'e.g., react-query, zod',
+              required: true,
+              suggestions: [
+                'react-query',
+                'zod',
+                'zustand',
+                'react-hook-form',
+                'tailwindcss',
+                'axios',
+                'lodash',
+              ],
+            },
+            {
+              type: 'input',
+              id: 'url',
+              label: 'URL',
+              description: 'Link to documentation or repository',
+              placeholder: 'https://...',
+              inputType: 'url',
+              required: true,
+            },
+            {
+              type: 'textarea',
+              id: 'reason',
+              label: 'Reason',
+              description: 'Why this library is needed',
+              placeholder: 'Explain why this library is chosen...',
+              rows: 2,
+            },
+          ],
         },
-        {
-          type: 'input',
-          id: 'url',
-          label: 'URL',
-          description: 'Link to documentation or repository',
-          placeholder: 'https://...',
-          inputType: 'url',
-          required: true,
+      },
+    ],
+  },
+  // Nested structure example: repeatable > group > repeatable
+  {
+    slug: 'modules',
+    title: 'Modules',
+    description: 'Module structure and feature list',
+    name: 'modules',
+    fields: [
+      {
+        type: 'repeatable',
+        id: 'items',
+        field: {
+          type: 'group',
+          fields: [
+            {
+              type: 'input',
+              id: 'name',
+              label: 'Module Name',
+              description: 'Name of the module',
+              placeholder: 'e.g., Authentication Module',
+              required: true,
+            },
+            {
+              type: 'textarea',
+              id: 'description',
+              label: 'Module Description',
+              description: 'Overview of the module',
+              placeholder: 'Describe the role of this module...',
+              rows: 2,
+            },
+            // Nested repeatable: list of features within each module
+            {
+              type: 'repeatable',
+              id: 'features',
+              minCount: 1,
+              field: {
+                type: 'group',
+                fields: [
+                  {
+                    type: 'input',
+                    id: 'feature_name',
+                    label: 'Feature Name',
+                    description: 'Name of the feature',
+                    placeholder: 'e.g., Login Feature',
+                    required: true,
+                  },
+                  {
+                    type: 'textarea',
+                    id: 'feature_description',
+                    label: 'Feature Description',
+                    description: 'Details of the feature',
+                    placeholder: 'Describe the feature details...',
+                    rows: 2,
+                  },
+                ],
+              },
+            },
+          ],
         },
-        {
-          type: 'textarea',
-          id: 'reason',
-          label: 'Reason',
-          description: 'Why this library is needed',
-          placeholder: 'Explain why this library is chosen...',
-          rows: 2,
-        },
-      ],
-    },
+      },
+    ],
   },
 ] as const satisfies Step[];
 
-const prompt = `You are a technical writer assistant. Generate a design document based on the following input.
+const prompt = ({
+  promptContext,
+}: {
+  promptContext: unknown;
+}) => `You are a technical writer assistant. Generate a design document based on the following input.
 
 ## Input Data Structure
 
 The input is JSON with the following structure:
 \`\`\`json
 {
-  "items": [
+  "steps": [
     {
-      "title": "Section title",
-      "description": "Section description",
-      "values": [
+      "title": "Step title",
+      "description": "Step description",
+      "fields": [
         { "label": "Field name", "description": "Field description", "value": "Input value" }
       ]
     }
@@ -171,7 +267,7 @@ Generate a Markdown design document with:
 
 ## Input Data
 
-{{INPUT_JSON}}
+${JSON.stringify(promptContext, null, 2)}
 
 Generate the design document based on the input above.`;
 
@@ -215,6 +311,9 @@ const config = defineConfig({
     }),
   ],
   hosted: true,
+  permissions: {
+    allowSave: true,
+  },
 });
 
 export default config;

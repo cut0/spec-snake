@@ -67,10 +67,10 @@ export const createDocsApp = (
   });
 
   app.post('/api/scenarios/:scenarioId/docs/preview', async (c) => {
-    const { scenario, sectionInfoMap } = c.get('scenarioInfo');
+    const { scenario, stepInfoMap } = c.get('scenarioInfo');
 
     const formData = (await c.req.json()) as Record<string, unknown>;
-    const promptContext = transformFormData(formData, sectionInfoMap);
+    const promptContext = transformFormData(formData, stepInfoMap);
 
     return streamSSE(c, async (stream) => {
       let fullContent = '';
@@ -104,14 +104,14 @@ export const createDocsApp = (
 
   app.post('/api/scenarios/:scenarioId/docs', async (c) => {
     const scenarioId = c.req.param('scenarioId');
-    const { scenario, sectionInfoMap } = c.get('scenarioInfo');
+    const { scenario, stepInfoMap } = c.get('scenarioInfo');
 
     if (!config.permissions.allowSave) {
       return c.json({ error: 'Save is not allowed' }, 403);
     }
 
     const { content, formData } = (await c.req.json()) as CreateDocBody;
-    const promptContext = transformFormData(formData, sectionInfoMap);
+    const promptContext = transformFormData(formData, stepInfoMap);
     const filename = getFilename(
       scenario,
       scenarioId,
@@ -156,14 +156,14 @@ export const createDocsApp = (
   app.put('/api/scenarios/:scenarioId/docs/:filename', async (c) => {
     const scenarioId = c.req.param('scenarioId');
     const filename = c.req.param('filename');
-    const { scenario, sectionInfoMap } = c.get('scenarioInfo');
+    const { scenario, stepInfoMap } = c.get('scenarioInfo');
 
     if (!config.permissions.allowSave) {
       return c.json({ error: 'Save is not allowed' }, 403);
     }
 
     const { content, formData } = (await c.req.json()) as UpdateDocBody;
-    const promptContext = transformFormData(formData, sectionInfoMap);
+    const promptContext = transformFormData(formData, stepInfoMap);
     const { outputPath } = await saveDocument({
       scenario,
       scenarioId,

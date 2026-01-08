@@ -4,7 +4,7 @@ import type { Config } from '../definitions';
 
 import { createDocsApp } from './apps/docs';
 import { createScenariosApp } from './apps/scenarios';
-import { buildSectionInfoMap } from './helpers/scenarios/build-section-info';
+import { buildStepInfoMap } from './helpers/scenarios/build-step-info';
 
 export const createApiServer = (rawConfig: Config) => {
   const app = new Hono();
@@ -23,7 +23,7 @@ export const createApiServer = (rawConfig: Config) => {
       scenario.id,
       {
         scenario,
-        sectionInfoMap: buildSectionInfoMap(scenario.steps),
+        stepInfoMap: buildStepInfoMap(scenario.steps),
       },
     ]),
   );

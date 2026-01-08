@@ -107,7 +107,8 @@ npx spec-snake-beta start --host 0.0.0.0
 
 See the [`examples/`](./examples/) directory for config file examples.
 
-- [`examples/spec-snake.ts`](./examples/spec-snake-ja.ts) - Basic config example
+- [`examples/local/spec-snake.config.ts`](./examples/local/spec-snake.config.ts) - Basic config example (English)
+- [`examples/local/spec-snake-ja.config.ts`](./examples/local/spec-snake-ja.config.ts) - Basic config example (Japanese)
 
 Also refer to [src/types.ts](./src/types.ts) for configurable options.
 
@@ -126,21 +127,16 @@ export default defineConfig({
           slug: "overview",
           title: "Overview",
           description: "Project overview",
-          section: {
-            type: "single",
-            name: "overview",
-            fields: [
-              { id: "title", type: "input", label: "Title", description: "" },
-            ],
-          },
+          name: "overview",
+          fields: [
+            { id: "title", type: "input", label: "Title", description: "" },
+          ],
         },
       ],
       prompt: "...",
       outputDir: "docs",
-      overrides: {
-        filename: ({ formData, timestamp }) =>
-          `${formData.overview?.title ?? "untitled"}-${timestamp}.md`,
-      },
+      filename: ({ formData, timestamp }) =>
+        `${formData.overview?.title ?? "untitled"}-${timestamp}.md`,
     }),
   ],
   permissions: {
@@ -173,9 +169,9 @@ export default defineConfig({
 | `steps`      | `Step[]`             | Yes      | Form wizard steps              |
 | `prompt`     | `Function`           | Yes      | Prompt function sent to Claude |
 | `outputDir`  | `string`             | No       | Directory for saving documents |
+| `filename`   | `string \| Function` | No       | Custom filename for documents  |
 | `aiSettings` | `AiSettings`         | No       | Claude Agent SDK settings      |
 | `hooks`      | `ScenarioHooks`      | No       | Lifecycle hooks                |
-| `overrides`  | `ScenarioOverrides`  | No       | Override default behaviors     |
 
 **`Step`** - Each step in the multi-step form
 
@@ -184,30 +180,8 @@ export default defineConfig({
 | `slug`        | `string`  | Yes      | URL-friendly identifier        |
 | `title`       | `string`  | Yes      | Title displayed in step header |
 | `description` | `string`  | Yes      | Description shown below title  |
-| `section`     | `Section` | Yes      | Section containing step fields |
-
-### `Section` - Two types available
-
-SingleSection - A group of fields entered once
-
-```typescript
-{
-  type: 'single',
-  name: 'overview',
-  fields: [...]
-}
-```
-
-ArraySection - A group of fields that can have multiple entries
-
-```typescript
-{
-  type: 'array',
-  name: 'requirements',
-  fields: [...],
-  minFieldCount: 1  // Minimum entries (optional)
-}
-```
+| `name`        | `string`  | Yes      | Key used in formData           |
+| `fields`      | `Field[]` | Yes      | Array of fields in this step   |
 
 ### Field Types
 
@@ -276,6 +250,51 @@ ArraySection - A group of fields that can have multiple entries
     { type: 'input', id: 'lastName', label: 'Last Name' }
   ]
 }
+```
+
+#### RepeatableLayout - Layout for repeating fields
+
+Allows users to add multiple instances of a field or group.
+
+```typescript
+// Single field repeatable
+{
+  type: 'repeatable',
+  id: 'tags',
+  minCount: 1,  // Minimum entries (optional)
+  field: { type: 'input', id: 'name', label: 'Tag', description: '' }
+}
+// formData: { tags: [{ name: 'tag1' }, { name: 'tag2' }] }
+
+// Group repeatable (multiple fields per entry)
+{
+  type: 'repeatable',
+  id: 'libraries',
+  minCount: 1,
+  field: {
+    type: 'group',
+    fields: [
+      { type: 'input', id: 'name', label: 'Library Name', description: '' },
+      { type: 'input', id: 'url', label: 'URL', description: '', inputType: 'url' }
+    ]
+  }
+}
+// formData: { libraries: [{ name: 'React', url: 'https://...' }, ...] }
+```
+
+#### GroupLayout - Visual grouping of fields
+
+Groups fields together visually (no repetition). To repeat a group, wrap it in a RepeatableLayout.
+
+```typescript
+{
+  type: 'group',
+  fields: [
+    { type: 'input', id: 'firstName', label: 'First Name', description: '' },
+    { type: 'input', id: 'lastName', label: 'Last Name', description: '' }
+  ]
+}
+// formData: { firstName: '...', lastName: '...' }
 ```
 
 ### Conditional Field Display
@@ -357,16 +376,15 @@ Fields can be conditionally shown/hidden based on other field values using the `
 }
 ```
 
-### `scenario.overrides` - Override default behaviors
+### `scenario.filename` - Custom document filename
 
 ```typescript
-{
-  // Static filename
-  filename: 'design-doc.md',
-  // Or dynamic filename
-  filename: ({ formData, timestamp }) =>
-    `${formData.project_name}-${timestamp}.md`
-}
+// Static filename
+filename: 'design-doc.md'
+
+// Or dynamic filename
+filename: ({ formData, timestamp }) =>
+  `${formData.project_name}-${timestamp}.md`
 ```
 
 ### Prompt Function

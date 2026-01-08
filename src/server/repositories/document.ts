@@ -100,17 +100,17 @@ export const getFilename = (
 ): string => {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
 
-  const filenameOverride = scenario.overrides?.filename;
-  if (filenameOverride != null) {
-    return typeof filenameOverride === 'function'
-      ? filenameOverride({
+  const filename = scenario.filename;
+  if (filename != null) {
+    return typeof filename === 'function'
+      ? filename({
           scenarioId,
           timestamp,
           content,
           formData,
           promptContext,
         })
-      : filenameOverride;
+      : filename;
   }
 
   return `design-doc-${scenarioId}-${timestamp}.md`;

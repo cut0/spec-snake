@@ -6,18 +6,31 @@ export type FieldInfo = {
   description: string;
 };
 
-export type SectionInfo = {
+export type StepInfo = {
   name: string;
   title: string;
   description: string;
   fields: FieldInfo[];
 };
 
+/**
+ * Get fields from a layout field (handles grid, repeatable, group)
+ */
+const getLayoutFields = (field: Field): Field[] => {
+  if (field.type === 'grid' || field.type === 'group') {
+    return field.fields;
+  }
+  if (field.type === 'repeatable') {
+    return [field.field];
+  }
+  return [];
+};
+
 export const extractFieldInfos = (fields: Field[]): FieldInfo[] => {
   const result: FieldInfo[] = [];
   for (const field of fields) {
     if (isLayoutField(field)) {
-      result.push(...extractFieldInfos(field.fields));
+      result.push(...extractFieldInfos(getLayoutFields(field)));
     } else {
       result.push({
         id: field.id,
@@ -29,20 +42,18 @@ export const extractFieldInfos = (fields: Field[]): FieldInfo[] => {
   return result;
 };
 
-export const buildSectionInfoMap = (
-  steps: Step[],
-): Map<string, SectionInfo> => {
-  const sectionMap = new Map<string, SectionInfo>(
+export const buildStepInfoMap = (steps: Step[]): Map<string, StepInfo> => {
+  const stepMap = new Map<string, StepInfo>(
     steps.map((step) => [
-      step.section.name,
+      step.name,
       {
-        name: step.section.name,
+        name: step.name,
         title: step.title,
         description: step.description,
-        fields: extractFieldInfos(step.section.fields),
+        fields: extractFieldInfos(step.fields),
       },
     ]),
   );
 
-  return sectionMap;
+  return stepMap;
 };

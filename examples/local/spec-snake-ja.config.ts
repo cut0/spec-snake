@@ -16,138 +16,205 @@ const steps = [
     slug: 'overview',
     title: '概要',
     description: '機能の基本情報',
-    section: {
-      type: 'single',
-      name: 'overview',
-      fields: [
-        {
-          type: 'input',
-          id: 'title',
-          label: 'タイトル',
-          description: '機能のタイトル',
-          placeholder: '機能名を入力',
-          required: true,
-        },
-        {
-          type: 'textarea',
-          id: 'description',
-          label: '説明',
-          description: '機能の詳細説明',
-          placeholder: '機能について説明してください...',
-          rows: 4,
-        },
-        {
-          type: 'select',
-          id: 'priority',
-          label: '優先度',
-          description: '機能の優先度',
-          placeholder: '優先度を選択',
-          options: priorityOptions,
-        },
-        // 条件付きフィールド: 優先度が「高」の場合のみ表示
-        {
-          type: 'input',
-          id: 'deadline',
-          label: '締め切り',
-          description: '目標完了日（高優先度の場合は必須）',
-          placeholder: 'YYYY-MM-DD',
-          inputType: 'date',
-          required: true,
-          when: { field: 'priority', is: 'high' },
-        },
-        // 条件付きフィールド: 優先度が「高」または「中」の場合に表示
-        {
-          type: 'textarea',
-          id: 'risk_assessment',
-          label: 'リスク評価',
-          description: '想定されるリスクと対策',
-          placeholder: '想定されるリスクを記述...',
-          rows: 3,
-          when: { field: 'priority', is: ['high', 'medium'] },
-        },
-      ],
-    },
+    name: 'overview',
+    fields: [
+      {
+        type: 'input',
+        id: 'title',
+        label: 'タイトル',
+        description: '機能のタイトル',
+        placeholder: '機能名を入力',
+        required: true,
+      },
+      {
+        type: 'textarea',
+        id: 'description',
+        label: '説明',
+        description: '機能の詳細説明',
+        placeholder: '機能について説明してください...',
+        rows: 4,
+      },
+      {
+        type: 'select',
+        id: 'priority',
+        label: '優先度',
+        description: '機能の優先度',
+        placeholder: '優先度を選択',
+        options: priorityOptions,
+      },
+      // 条件付きフィールド: 優先度が「高」の場合のみ表示
+      {
+        type: 'input',
+        id: 'deadline',
+        label: '締め切り',
+        description: '目標完了日（高優先度の場合は必須）',
+        placeholder: 'YYYY-MM-DD',
+        inputType: 'date',
+        required: true,
+        when: { field: 'priority', is: 'high' },
+      },
+      // 条件付きフィールド: 優先度が「高」または「中」の場合に表示
+      {
+        type: 'textarea',
+        id: 'risk_assessment',
+        label: 'リスク評価',
+        description: '想定されるリスクと対策',
+        placeholder: '想定されるリスクを記述...',
+        rows: 3,
+        when: { field: 'priority', is: ['high', 'medium'] },
+      },
+    ],
   },
   {
     slug: 'design',
     title: 'デザイン',
     description: 'デザインリファレンスとモックアップ',
-    section: {
-      type: 'single',
-      name: 'design',
-      fields: [
-        {
-          type: 'input',
-          id: 'figma_link',
-          label: 'Figma リンク',
-          description: 'Figma デザインファイルまたはフレームへのリンク',
-          placeholder: 'https://www.figma.com/design/...',
-          inputType: 'url',
-          required: true,
-        },
-        {
-          type: 'textarea',
-          id: 'design_notes',
-          label: 'デザインメモ',
-          description: 'デザインに関する補足事項',
-          placeholder: 'デザインで考慮すべき点など...',
-          rows: 3,
-        },
-      ],
-    },
+    name: 'design',
+    fields: [
+      {
+        type: 'input',
+        id: 'figma_link',
+        label: 'Figma リンク',
+        description: 'Figma デザインファイルまたはフレームへのリンク',
+        placeholder: 'https://www.figma.com/design/...',
+        inputType: 'url',
+        required: true,
+      },
+      {
+        type: 'textarea',
+        id: 'design_notes',
+        label: 'デザインメモ',
+        description: 'デザインに関する補足事項',
+        placeholder: 'デザインで考慮すべき点など...',
+        rows: 3,
+      },
+    ],
   },
   {
     slug: 'libraries',
     title: 'ライブラリ',
     description: '外部ライブラリと依存関係',
-    section: {
-      type: 'array',
-      name: 'libraries',
-      fields: [
-        {
-          type: 'input',
-          id: 'name',
-          label: 'ライブラリ名',
-          description: 'ライブラリの名前',
-          placeholder: '例: react-query, zod',
-          required: true,
-          suggestions: [
-            'react-query',
-            'zod',
-            'zustand',
-            'react-hook-form',
-            'tailwindcss',
-            'axios',
-            'lodash',
+    name: 'libraries',
+    fields: [
+      {
+        type: 'repeatable',
+        id: 'items',
+        minCount: 1,
+        field: {
+          type: 'group',
+          fields: [
+            {
+              type: 'input',
+              id: 'name',
+              label: 'ライブラリ名',
+              description: 'ライブラリの名前',
+              placeholder: '例: react-query, zod',
+              required: true,
+              suggestions: [
+                'react-query',
+                'zod',
+                'zustand',
+                'react-hook-form',
+                'tailwindcss',
+                'axios',
+                'lodash',
+              ],
+            },
+            {
+              type: 'input',
+              id: 'url',
+              label: 'URL',
+              description: 'ドキュメントまたはリポジトリへのリンク',
+              placeholder: 'https://...',
+              inputType: 'url',
+              required: true,
+            },
+            {
+              type: 'textarea',
+              id: 'reason',
+              label: '選定理由',
+              description: 'このライブラリが必要な理由',
+              placeholder: 'このライブラリを選んだ理由を説明...',
+              rows: 2,
+            },
           ],
         },
-        {
-          type: 'input',
-          id: 'url',
-          label: 'URL',
-          description: 'ドキュメントまたはリポジトリへのリンク',
-          placeholder: 'https://...',
-          inputType: 'url',
-          required: true,
+      },
+    ],
+  },
+  // ネスト構造の例: repeatable > group > repeatable
+  {
+    slug: 'modules',
+    title: 'モジュール',
+    description: 'モジュール構成と機能一覧',
+    name: 'modules',
+    fields: [
+      {
+        type: 'repeatable',
+        id: 'items',
+        field: {
+          type: 'group',
+          fields: [
+            {
+              type: 'input',
+              id: 'name',
+              label: 'モジュール名',
+              description: 'モジュールの名前',
+              placeholder: '例: 認証モジュール',
+              required: true,
+            },
+            {
+              type: 'textarea',
+              id: 'description',
+              label: 'モジュール説明',
+              description: 'モジュールの概要',
+              placeholder: 'このモジュールの役割を説明...',
+              rows: 2,
+            },
+            // ネストした repeatable: 各モジュール内の機能一覧
+            {
+              type: 'repeatable',
+              id: 'features',
+              minCount: 1,
+              field: {
+                type: 'group',
+                fields: [
+                  {
+                    type: 'input',
+                    id: 'feature_name',
+                    label: '機能名',
+                    description: '機能の名前',
+                    placeholder: '例: ログイン機能',
+                    required: true,
+                  },
+                  {
+                    type: 'textarea',
+                    id: 'feature_description',
+                    label: '機能説明',
+                    description: '機能の詳細',
+                    placeholder: '機能の詳細を説明...',
+                    rows: 2,
+                  },
+                ],
+              },
+            },
+          ],
         },
-        {
-          type: 'textarea',
-          id: 'reason',
-          label: '選定理由',
-          description: 'このライブラリが必要な理由',
-          placeholder: 'このライブラリを選んだ理由を説明...',
-          rows: 2,
-        },
-      ],
-    },
+      },
+    ],
   },
 ] as const satisfies Step[];
 
 const prompt = ({
   promptContext,
+  formData,
 }: {
   promptContext: unknown;
-}) => `あなたはテクニカルライターアシスタントです。以下の入力に基づいて設計ドキュメントを生成してください。
+  formData: unknown;
+}) => {
+  console.log(JSON.stringify(formData, null, 2));
+  console.log(JSON.stringify(promptContext, null, 2));
+  return `あなたはテクニカルライターアシスタントです。以下の入力に基づいて設計ドキュメントを生成してください。
 
 ## 入力データ構造
 
@@ -208,6 +275,7 @@ const prompt = ({
 ${JSON.stringify(promptContext, null, 2)}
 
 上記の入力に基づいて設計ドキュメントを生成してください。`;
+};
 
 // defineConfig と defineScenario を使用して型安全な設定を定義
 const config = defineConfig({
@@ -258,12 +326,10 @@ const config = defineConfig({
         },
         strictMcpConfig: true,
       },
-      // 例: formData を使った型安全な overrides
-      // overrides: {
-      //   filename: ({ formData, timestamp }) => {
-      //     // formData.overview?.title は型安全！
-      //     return `${formData.overview?.title ?? 'untitled'}-${timestamp}.md`;
-      //   },
+      // 例: formData を使った型安全な filename
+      // filename: ({ formData, timestamp }) => {
+      //   // formData.overview?.title は型安全！
+      //   return `${formData.overview?.title ?? 'untitled'}-${timestamp}.md`;
       // },
     }),
   ],

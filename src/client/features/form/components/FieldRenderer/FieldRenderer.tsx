@@ -1,63 +1,19 @@
-import { type FC, useCallback } from 'react';
+import type { FC } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
-import { Checkbox, Input, Select, Textarea } from '..';
+import { Input, Textarea } from '..';
 import type { Field } from '../../../../../definitions';
 import { isFieldVisible } from '../../services';
+
+import { CheckboxRender } from './CheckboxRender';
+import { GroupFieldRenderer } from './GroupFieldRenderer';
+import { RepeatableFieldRenderer } from './RepeatableFieldRenderer';
+import { SelectRender } from './SelectRender';
 
 type FieldRendererProps = {
   field: Field;
   namePrefix?: string;
 };
-
-type SelectRenderProps = {
-  field: Field & { type: 'select' };
-  value: string;
-  onValueChange: (value: string | null) => void;
-};
-
-const SelectRender: FC<SelectRenderProps> = ({
-  field,
-  value,
-  onValueChange,
-}) => {
-  const handleValueChange = useCallback(
-    (newValue: string | null) => {
-      onValueChange(newValue ?? '');
-    },
-    [onValueChange],
-  );
-
-  return (
-    <Select
-      label={field.label}
-      options={field.options}
-      placeholder={field.placeholder}
-      required={field.required}
-      value={value}
-      onValueChange={handleValueChange}
-    />
-  );
-};
-
-type CheckboxRenderProps = {
-  field: Field & { type: 'checkbox' };
-  checked: boolean;
-  onCheckedChange: (checked: boolean) => void;
-};
-
-const CheckboxRender: FC<CheckboxRenderProps> = ({
-  field,
-  checked,
-  onCheckedChange,
-}) => (
-  <Checkbox
-    checked={checked}
-    label={field.label}
-    required={field.required}
-    onCheckedChange={onCheckedChange}
-  />
-);
 
 export const FieldRenderer: FC<FieldRendererProps> = ({
   field,
@@ -80,8 +36,12 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
   const getFieldName = (fieldId: string) =>
     namePrefix != null ? `${namePrefix}.${fieldId}` : fieldId;
 
-  // Grid layout doesn't have 'when' condition
-  const isVisible = field.type === 'grid' || isFieldVisible(field, itemData);
+  // Layout fields (grid, repeatable, group) don't have 'when' condition
+  const isVisible =
+    field.type === 'grid' ||
+    field.type === 'repeatable' ||
+    field.type === 'group' ||
+    isFieldVisible(field, itemData);
 
   if (!isVisible) {
     return null;
@@ -135,7 +95,6 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
         <Controller
           control={control}
           name={getFieldName(field.id)}
-          /* eslint-disable react/jsx-no-bind, react/jsx-handler-names */
           render={({ field: controllerField }) => (
             <SelectRender
               field={field}
@@ -143,7 +102,6 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
               onValueChange={controllerField.onChange}
             />
           )}
-          /* eslint-enable react/jsx-no-bind, react/jsx-handler-names */
         />
       );
     case 'checkbox':
@@ -151,7 +109,6 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
         <Controller
           control={control}
           name={getFieldName(field.id)}
-          /* eslint-disable react/jsx-no-bind, react/jsx-handler-names */
           render={({ field: controllerField }) => (
             <CheckboxRender
               checked={controllerField.value ?? false}
@@ -159,7 +116,6 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
               onCheckedChange={controllerField.onChange}
             />
           )}
-          /* eslint-enable react/jsx-no-bind, react/jsx-handler-names */
         />
       );
     case 'grid':
@@ -177,6 +133,10 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
           ))}
         </div>
       );
+    case 'repeatable':
+      return <RepeatableFieldRenderer field={field} namePrefix={namePrefix} />;
+    case 'group':
+      return <GroupFieldRenderer field={field} namePrefix={namePrefix} />;
     default:
       return null;
   }
