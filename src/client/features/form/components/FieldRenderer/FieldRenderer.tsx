@@ -1,4 +1,4 @@
-import { type FC, useCallback, useMemo } from 'react';
+import { type FC, useCallback } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Checkbox, Input, Select, Textarea } from '..';
@@ -61,21 +61,27 @@ const CheckboxRender: FC<CheckboxRenderProps> = ({
 
 export const FieldRenderer: FC<FieldRendererProps> = ({
   field,
-  namePrefix = '',
+  namePrefix,
 }) => {
   const { register, control } = useFormContext();
   const formData = useWatch({ control }) as Record<string, unknown>;
 
+  // Extract nested data for array sections (e.g., "items.0" -> formData.items[0])
+  const itemData =
+    namePrefix != null
+      ? namePrefix
+          .split('.')
+          .reduce<Record<string, unknown>>(
+            (acc, key) => (acc?.[key] ?? {}) as Record<string, unknown>,
+            formData,
+          )
+      : formData;
+
   const getFieldName = (fieldId: string) =>
-    namePrefix ? `${namePrefix}.${fieldId}` : fieldId;
+    namePrefix != null ? `${namePrefix}.${fieldId}` : fieldId;
 
-  // Check visibility condition
-  const isVisible = useMemo(() => {
-    // Grid layout doesn't have 'when' condition
-    if (field.type === 'grid') return true;
-
-    return isFieldVisible(field, formData);
-  }, [field, formData]);
+  // Grid layout doesn't have 'when' condition
+  const isVisible = field.type === 'grid' || isFieldVisible(field, itemData);
 
   if (!isVisible) {
     return null;

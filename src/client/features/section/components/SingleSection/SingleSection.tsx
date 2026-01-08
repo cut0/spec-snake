@@ -48,7 +48,6 @@ export const SingleSection: FC<SingleSectionProps> = ({ step, formKey }) => {
             <FieldRenderer
               key={'id' in field ? field.id : field.type}
               field={field}
-              namePrefix=""
             />
           ))}
         </form>
