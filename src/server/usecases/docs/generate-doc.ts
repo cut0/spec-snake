@@ -4,7 +4,11 @@ import {
   query,
 } from '@anthropic-ai/claude-agent-sdk';
 
-import type { AiContext, Scenario } from '../../../definitions';
+import {
+  type AiContext,
+  DEFAULT_MOCK_RESPONSE,
+  type Scenario,
+} from '../../../definitions';
 
 type GenerateDesignDocParams = {
   scenario: Scenario;
@@ -70,4 +74,11 @@ export async function* generateDesignDocStream({
       }
     }
   }
+}
+
+/**
+ * Generate a mock response when AI is disabled
+ */
+export async function* generateMockDocStream(): AsyncGenerator<StreamChunk> {
+  yield { type: 'text_delta', text: DEFAULT_MOCK_RESPONSE };
 }

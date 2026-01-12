@@ -974,6 +974,37 @@ export type InferFormDataFromSteps<TSteps extends readonly Step[]> =
     Record<string, unknown>;
 
 // =============================================================================
+// AI Mode Types
+// =============================================================================
+
+/**
+ * AI mode for document generation
+ *
+ * - `'stream'` - AI enabled with SSE streaming (default)
+ * - `'sync'` - AI enabled, returns full response at once
+ * - `'mock'` - AI disabled, returns fixed mock response
+ *
+ * @example
+ * ```ts
+ * // Streaming mode (default)
+ * ai: 'stream'
+ *
+ * // Non-streaming mode
+ * ai: 'sync'
+ *
+ * // Mock mode for development/testing
+ * ai: 'mock'
+ * ```
+ */
+export type AiMode = 'stream' | 'sync' | 'mock';
+
+/**
+ * Default mock response when AI is disabled
+ */
+export const DEFAULT_MOCK_RESPONSE =
+  '# Mock Document\n\nAI is disabled. This is a mock response.';
+
+// =============================================================================
 // Configuration Types
 // =============================================================================
 
@@ -1012,6 +1043,11 @@ export type Config = {
   permissions: Permissions;
   /** When true, runs in hosted mode where saving is disabled regardless of permissions.allowSave */
   hosted?: boolean;
+  /**
+   * AI mode for document generation
+   * @default 'stream'
+   */
+  ai?: AiMode;
 };
 
 // =============================================================================

@@ -230,10 +230,16 @@ export const PermissionsSchema = v.object({
   allowSave: v.boolean(),
 });
 
+export const AiModeSchema = v.optional(
+  v.picklist(['stream', 'sync', 'mock']),
+  'stream',
+);
+
 export const ConfigSchema = v.object({
   scenarios: v.array(ScenarioSchema),
   permissions: PermissionsSchema,
   hosted: v.optional(v.boolean(), false),
+  ai: AiModeSchema,
 });
 
 // =============================================================================
