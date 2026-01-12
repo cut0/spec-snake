@@ -141,6 +141,8 @@ export type InputField = {
   suggestions?: string[];
   /** Condition for when this field should be visible */
   when?: FieldCondition;
+  /** Default value for the field */
+  default?: string;
 };
 
 /**
@@ -174,6 +176,8 @@ export type TextareaField = {
   rows?: number;
   /** Condition for when this field should be visible */
   when?: FieldCondition;
+  /** Default value for the field */
+  default?: string;
 };
 
 /**
@@ -211,6 +215,8 @@ export type SelectField = {
   options: SelectOption[];
   /** Condition for when this field should be visible */
   when?: FieldCondition;
+  /** Default value for the field (must match one of the option values) */
+  default?: string;
 };
 
 /**
@@ -242,6 +248,8 @@ export type CheckboxField = {
   type: 'checkbox';
   /** Condition for when this field should be visible */
   when?: FieldCondition;
+  /** Default value for the field */
+  default?: boolean;
 };
 
 export type FormField =
@@ -347,6 +355,8 @@ export type RepeatableLayout = {
   id: string;
   /** Minimum number of entries required (default: 0) */
   minCount?: number;
+  /** Default number of entries to create initially (defaults to minCount if not specified) */
+  defaultCount?: number;
   /** The field or group to repeat */
   field: FormField | GroupLayout;
 };

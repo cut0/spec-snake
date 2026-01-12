@@ -81,23 +81,27 @@ export const InputFieldSchema = v.object({
   type: v.literal('input'),
   inputType: v.optional(v.picklist(['text', 'date', 'url'])),
   suggestions: v.optional(v.array(v.string())),
+  default: v.optional(v.string()),
 });
 
 export const TextareaFieldSchema = v.object({
   ...FieldBaseSchema.entries,
   type: v.literal('textarea'),
   rows: v.optional(v.number()),
+  default: v.optional(v.string()),
 });
 
 export const SelectFieldSchema = v.object({
   ...FieldBaseSchema.entries,
   type: v.literal('select'),
   options: v.array(SelectOptionSchema),
+  default: v.optional(v.string()),
 });
 
 export const CheckboxFieldSchema = v.object({
   ...FieldBaseSchema.entries,
   type: v.literal('checkbox'),
+  default: v.optional(v.boolean()),
 });
 
 export const FormFieldSchema = v.union([
@@ -127,6 +131,7 @@ export const RepeatableLayoutSchema: v.GenericSchema<RepeatableLayout> =
     type: v.literal('repeatable'),
     id: v.string(),
     minCount: v.optional(v.number()),
+    defaultCount: v.optional(v.number()),
     field: v.union([FormFieldSchema, GroupLayoutSchema]),
   });
 
