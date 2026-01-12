@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.11
+
+### Patch Changes
+
+- bcbac0a: feat: add default value support for form fields
+
 ## 0.0.1-beta.10
 
 ### Patch Changes
