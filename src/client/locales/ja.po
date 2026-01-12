@@ -27,8 +27,12 @@ msgstr "{0}ステップ"
 #~ msgid "Add"
 #~ msgstr "追加"
 
+#. placeholder {0}: singleField.label
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:146
+msgid "Add {0}"
+msgstr "{0}を追加"
+
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:98
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:157
 msgid "Add item"
 msgstr "アイテムを追加"
 
@@ -148,7 +152,7 @@ msgid "Regenerate"
 msgstr "再生成"
 
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:71
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:140
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:129
 msgid "Remove"
 msgstr "削除"
 

@@ -27,8 +27,12 @@ msgstr "{0} steps"
 #~ msgid "Add"
 #~ msgstr "Add"
 
+#. placeholder {0}: singleField.label
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:146
+msgid "Add {0}"
+msgstr "Add {0}"
+
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:98
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:157
 msgid "Add item"
 msgstr "Add item"
 
@@ -148,7 +152,7 @@ msgid "Regenerate"
 msgstr "Regenerate"
 
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:71
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:140
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:129
 msgid "Remove"
 msgstr "Remove"
 
