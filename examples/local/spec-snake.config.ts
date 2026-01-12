@@ -335,6 +335,8 @@ const config = defineConfig({
   permissions: {
     allowSave: true,
   },
+  // AI mode: 'stream' (default), 'sync', or 'mock'
+  // ai: 'mock', // Use mock mode for development without AI
 });
 
 export default config;

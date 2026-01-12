@@ -145,6 +145,8 @@ export default defineConfig({
   permissions: {
     allowSave: true,
   },
+  // AI モード: 'stream'（デフォルト）, 'sync', 'mock'
+  // ai: 'mock', // 開発時に AI なしでモックモードを使用
 });
 ```
 
@@ -152,10 +154,19 @@ export default defineConfig({
 
 **`Config`** - ルート設定オブジェクト
 
-| プロパティ    | 型            | 必須 | 説明                     |
-| ------------- | ------------- | ---- | ------------------------ |
-| `scenarios`   | `Scenario[]`  | Yes  | 利用可能なシナリオの配列 |
-| `permissions` | `Permissions` | Yes  | グローバル権限設定       |
+| プロパティ    | 型            | 必須 | 説明                                                                 |
+| ------------- | ------------- | ---- | -------------------------------------------------------------------- |
+| `scenarios`   | `Scenario[]`  | Yes  | 利用可能なシナリオの配列                                             |
+| `permissions` | `Permissions` | Yes  | グローバル権限設定                                                   |
+| `ai`          | `AiMode`      | No   | AI モード (`'stream'` \| `'sync'` \| `'mock'`)。デフォルト: `'stream'` |
+
+**`AiMode`** - ドキュメント生成の AI モード
+
+| 値         | 説明                                                     |
+| ---------- | -------------------------------------------------------- |
+| `'stream'` | AI 有効、SSE ストリーミング（デフォルト）                |
+| `'sync'`   | AI 有効、レスポンスを一括で返す                          |
+| `'mock'`   | AI 無効、開発用の固定モックレスポンスを返す              |
 
 **`Permissions`** - 権限設定
 

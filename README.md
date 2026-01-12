@@ -142,6 +142,8 @@ export default defineConfig({
   permissions: {
     allowSave: true,
   },
+  // AI mode: 'stream' (default), 'sync', or 'mock'
+  // ai: 'mock', // Use mock mode for development without AI
 });
 ```
 
@@ -149,10 +151,19 @@ export default defineConfig({
 
 **`Config`** - Root config object
 
-| Property      | Type          | Required | Description              |
-| ------------- | ------------- | -------- | ------------------------ |
-| `scenarios`   | `Scenario[]`  | Yes      | Array of scenarios       |
-| `permissions` | `Permissions` | Yes      | Global permission config |
+| Property      | Type          | Required | Description                          |
+| ------------- | ------------- | -------- | ------------------------------------ |
+| `scenarios`   | `Scenario[]`  | Yes      | Array of scenarios                   |
+| `permissions` | `Permissions` | Yes      | Global permission config             |
+| `ai`          | `AiMode`      | No       | AI mode (`'stream'` \| `'sync'` \| `'mock'`). Default: `'stream'` |
+
+**`AiMode`** - AI mode for document generation
+
+| Value      | Description                                              |
+| ---------- | -------------------------------------------------------- |
+| `'stream'` | AI enabled with SSE streaming (default)                  |
+| `'sync'`   | AI enabled, returns full response at once                |
+| `'mock'`   | AI disabled, returns fixed mock response for development |
 
 **`Permissions`** - Permission settings
 
