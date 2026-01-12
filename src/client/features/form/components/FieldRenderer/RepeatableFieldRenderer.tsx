@@ -105,17 +105,6 @@ export const RepeatableFieldRenderer: FC<RepeatableFieldRendererProps> = ({
   const singleField = field.field as FormField;
   return (
     <div className="space-y-3">
-      <div>
-        <span className="text-sm font-medium text-gray-700">
-          {singleField.label}
-          {singleField.required === true && (
-            <span className="ml-1 text-red-500">*</span>
-          )}
-        </span>
-        {singleField.description && (
-          <p className="text-sm text-gray-500">{singleField.description}</p>
-        )}
-      </div>
       <div className="px-2">
         {fields.map((item, index) => (
           <div key={item.id}>
@@ -154,7 +143,7 @@ export const RepeatableFieldRenderer: FC<RepeatableFieldRendererProps> = ({
           onClick={handleAppend}
         >
           <PlusIcon />
-          <span className="text-sm">{t`Add item`}</span>
+          <span className="text-sm">{t`Add ${singleField.label}`}</span>
         </button>
       </div>
     </div>
