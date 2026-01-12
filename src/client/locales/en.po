@@ -23,27 +23,26 @@ msgstr "{0} documents available"
 msgid "{0} steps"
 msgstr "{0} steps"
 
-#: src/client/features/step/components/ArraySection/ArraySection.tsx:91
-#~ msgid "Add"
-#~ msgstr "Add"
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:62
+msgid "Add"
+msgstr "Add"
 
-#. placeholder {0}: singleField.label
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:146
-msgid "Add {0}"
-msgstr "Add {0}"
+#~ msgid "Add {0}"
+#~ msgstr "Add {0}"
 
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:98
-msgid "Add item"
-msgstr "Add item"
+#~ msgid "Add item"
+#~ msgstr "Add item"
 
-#: src/client/features/docs/mutations/useSubmitDocMutation.ts:40
-#: src/client/features/docs/mutations/useUpdateDocMutation.ts:47
+#: src/client/features/docs/mutations/useSubmitDocMutation.ts:46
+#: src/client/features/docs/mutations/useUpdateDocMutation.ts:50
 msgid "An error occurred"
 msgstr "An error occurred"
 
 #: src/client/routes/scenarios/$scenarioId/docs/-DocumentListPage.tsx:37
-#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:189
-#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:177
+#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:191
+#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:186
 msgid "Back"
 msgstr "Back"
 
@@ -52,7 +51,7 @@ msgid "Back to Scenario List"
 msgstr "Back to Scenario List"
 
 #: src/client/components/Snackbar/Snackbar.tsx:73
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:50
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:51
 msgid "Close"
 msgstr "Close"
 
@@ -65,11 +64,19 @@ msgstr "Close menu"
 msgid "Collapse sidebar"
 msgstr "Collapse sidebar"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:49
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:145
+msgid "Content"
+msgstr "Content"
+
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:19
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:24
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:63
 msgid "Copied to clipboard"
 msgstr "Copied to clipboard"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:111
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:40
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:58
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:170
 msgid "Copy"
 msgstr "Copy"
 
@@ -85,13 +92,21 @@ msgstr "Create New"
 msgid "Create New Document"
 msgstr "Create New Document"
 
-#: src/client/features/docs/mutations/useSubmitDocMutation.ts:37
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:150
+msgid "Data"
+msgstr "Data"
+
+#: src/client/features/docs/mutations/useSubmitDocMutation.ts:43
 msgid "Design Doc has been created"
 msgstr "Design Doc has been created"
 
-#: src/client/features/docs/mutations/useUpdateDocMutation.ts:44
+#: src/client/features/docs/mutations/useUpdateDocMutation.ts:47
 msgid "Document has been updated"
 msgstr "Document has been updated"
+
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:185
+msgid "Edit"
+msgstr "Edit"
 
 #: src/client/routes/scenarios/$scenarioId/-ScenarioModePage.tsx:73
 msgid "Edit Existing"
@@ -101,20 +116,20 @@ msgstr "Edit Existing"
 msgid "Expand sidebar"
 msgstr "Expand sidebar"
 
-#: src/client/features/docs/mutations/usePreviewDocMutation.ts:104
+#: src/client/features/docs/mutations/usePreviewDocMutation.ts:109
 msgid "Failed to generate preview"
 msgstr "Failed to generate preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:173
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:229
 msgid "Generate preview"
 msgstr "Generate preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:81
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:99
 msgid "Generating..."
 msgstr "Generating..."
 
-#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:201
-#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:189
+#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:203
+#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:198
 msgid "Next"
 msgstr "Next"
 
@@ -138,26 +153,26 @@ msgstr "Open menu"
 msgid "Please generate a preview"
 msgstr "Please generate a preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:170
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:226
 msgid "Press the button to generate a Design Doc preview"
 msgstr "Press the button to generate a Design Doc preview"
 
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:48
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:185
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:49
 #: src/client/features/step/components/StepNavigation/StepNavigation.tsx:64
 msgid "Preview"
 msgstr "Preview"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:102
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:110
 msgid "Regenerate"
 msgstr "Regenerate"
 
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:71
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:129
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:74
 msgid "Remove"
 msgstr "Remove"
 
-#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:103
-#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:91
+#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:105
+#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:100
 msgid "Required fields are not filled"
 msgstr "Required fields are not filled"
 
@@ -165,7 +180,7 @@ msgstr "Required fields are not filled"
 msgid "Save"
 msgstr "Save"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:81
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:99
 msgid "Saving..."
 msgstr "Saving..."
 
@@ -190,10 +205,10 @@ msgstr "Show preview"
 msgid "Step navigation"
 msgstr "Step navigation"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:93
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:177
 msgid "Switch to edit mode"
 msgstr "Switch to edit mode"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:92
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:176
 msgid "Switch to preview mode"
 msgstr "Switch to preview mode"

@@ -2,12 +2,14 @@ import { useLingui } from '@lingui/react/macro';
 import { useMutation } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 
+import type { AiContext } from '../../../../definitions';
 import { useSnackbar } from '../../snackbar/stores/snackbar';
 import { useDocsStore } from '../stores/useDocsStore';
 
 type PreviewDocInput = {
   scenarioId: string;
   formData: Record<string, unknown>;
+  aiContext: AiContext;
 };
 
 type SSEMessage =
@@ -27,7 +29,10 @@ const previewDocStream = async (
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(input.formData),
+      body: JSON.stringify({
+        formData: input.formData,
+        aiContext: input.aiContext,
+      }),
     },
   );
 

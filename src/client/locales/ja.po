@@ -23,27 +23,26 @@ msgstr "{0}件のドキュメント"
 msgid "{0} steps"
 msgstr "{0}ステップ"
 
-#: src/client/features/step/components/ArraySection/ArraySection.tsx:91
-#~ msgid "Add"
-#~ msgstr "追加"
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:62
+msgid "Add"
+msgstr "追加"
 
-#. placeholder {0}: singleField.label
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:146
-msgid "Add {0}"
-msgstr "{0}を追加"
+#~ msgid "Add {0}"
+#~ msgstr "{0}を追加"
 
 #: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:98
-msgid "Add item"
-msgstr "アイテムを追加"
+#~ msgid "Add item"
+#~ msgstr "アイテムを追加"
 
-#: src/client/features/docs/mutations/useSubmitDocMutation.ts:40
-#: src/client/features/docs/mutations/useUpdateDocMutation.ts:47
+#: src/client/features/docs/mutations/useSubmitDocMutation.ts:46
+#: src/client/features/docs/mutations/useUpdateDocMutation.ts:50
 msgid "An error occurred"
 msgstr "エラーが発生しました"
 
 #: src/client/routes/scenarios/$scenarioId/docs/-DocumentListPage.tsx:37
-#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:189
-#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:177
+#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:191
+#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:186
 msgid "Back"
 msgstr "戻る"
 
@@ -52,7 +51,7 @@ msgid "Back to Scenario List"
 msgstr "シナリオ一覧に戻る"
 
 #: src/client/components/Snackbar/Snackbar.tsx:73
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:50
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:51
 msgid "Close"
 msgstr "閉じる"
 
@@ -65,11 +64,19 @@ msgstr "メニューを閉じる"
 msgid "Collapse sidebar"
 msgstr "サイドバーを折りたたむ"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:49
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:145
+msgid "Content"
+msgstr "コンテンツ"
+
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:19
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:24
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:63
 msgid "Copied to clipboard"
 msgstr "クリップボードにコピーしました"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:111
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:40
+#: src/client/features/docs/components/DataViewer/DataViewer.tsx:58
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:170
 msgid "Copy"
 msgstr "コピー"
 
@@ -85,13 +92,21 @@ msgstr "新規作成"
 msgid "Create New Document"
 msgstr "新しいドキュメントを作成"
 
-#: src/client/features/docs/mutations/useSubmitDocMutation.ts:37
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:150
+msgid "Data"
+msgstr "データ"
+
+#: src/client/features/docs/mutations/useSubmitDocMutation.ts:43
 msgid "Design Doc has been created"
 msgstr "Design Docを生成しました"
 
-#: src/client/features/docs/mutations/useUpdateDocMutation.ts:44
+#: src/client/features/docs/mutations/useUpdateDocMutation.ts:47
 msgid "Document has been updated"
 msgstr "ドキュメントを更新しました"
+
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:185
+msgid "Edit"
+msgstr "編集"
 
 #: src/client/routes/scenarios/$scenarioId/-ScenarioModePage.tsx:73
 msgid "Edit Existing"
@@ -101,20 +116,20 @@ msgstr "既存を編集"
 msgid "Expand sidebar"
 msgstr "サイドバーを展開"
 
-#: src/client/features/docs/mutations/usePreviewDocMutation.ts:104
+#: src/client/features/docs/mutations/usePreviewDocMutation.ts:109
 msgid "Failed to generate preview"
 msgstr "プレビューの生成に失敗しました"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:173
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:229
 msgid "Generate preview"
 msgstr "プレビューを生成"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:81
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:99
 msgid "Generating..."
 msgstr "生成中..."
 
-#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:201
-#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:189
+#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:203
+#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:198
 msgid "Next"
 msgstr "次へ"
 
@@ -138,26 +153,26 @@ msgstr "メニューを開く"
 msgid "Please generate a preview"
 msgstr "プレビューを生成してください"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:170
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:226
 msgid "Press the button to generate a Design Doc preview"
 msgstr "ボタンを押すとDesign Docのプレビューが生成されます"
 
-#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:48
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:185
+#: src/client/features/docs/components/PreviewDialog/PreviewDialog.tsx:49
 #: src/client/features/step/components/StepNavigation/StepNavigation.tsx:64
 msgid "Preview"
 msgstr "プレビュー"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:102
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:110
 msgid "Regenerate"
 msgstr "再生成"
 
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:71
-#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:129
+#: src/client/features/form/components/FieldRenderer/RepeatableFieldRenderer.tsx:74
 msgid "Remove"
 msgstr "削除"
 
-#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:103
-#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:91
+#: src/client/routes/scenarios/$scenarioId/docs/$filename/-EditDocPage.tsx:105
+#: src/client/routes/scenarios/$scenarioId/docs/new/-NewDocPage.tsx:100
 msgid "Required fields are not filled"
 msgstr "必須項目が入力されていません"
 
@@ -165,7 +180,7 @@ msgstr "必須項目が入力されていません"
 msgid "Save"
 msgstr "保存"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:81
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:99
 msgid "Saving..."
 msgstr "保存中..."
 
@@ -190,10 +205,10 @@ msgstr "プレビューを表示"
 msgid "Step navigation"
 msgstr "ステップナビゲーション"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:93
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:177
 msgid "Switch to edit mode"
 msgstr "編集モードに切り替え"
 
-#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:92
+#: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:176
 msgid "Switch to preview mode"
 msgstr "プレビューモードに切り替え"

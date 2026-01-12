@@ -1,4 +1,8 @@
 import {
+  type AiContext,
+  type AiContextFieldMeta,
+  type AiContextRepeatable,
+  type AiContextStep,
   type Field,
   type FieldConditionObject,
   type FormField,
@@ -173,4 +177,110 @@ export const buildFormDefaultValues = (
     defaults[step.name] = buildFieldDefaults(step.fields);
   }
   return defaults;
+};
+
+/**
+ * Build field metadata for aiContext from a field
+ */
+const buildFieldMeta = (
+  field: Field,
+): AiContextFieldMeta | AiContextRepeatable | null => {
+  switch (field.type) {
+    case 'input':
+    case 'textarea':
+    case 'select':
+    case 'checkbox':
+      return {
+        label: field.label,
+        description: field.description,
+      };
+
+    case 'grid':
+      return buildFieldsMeta(field.fields);
+
+    case 'repeatable': {
+      const innerField = field.field;
+      if (innerField.type === 'group') {
+        return buildFieldsMeta(innerField.fields);
+      }
+      const meta = buildFieldMeta(innerField);
+      if (meta != null && 'label' in meta) {
+        return { [innerField.id]: meta };
+      }
+      return meta;
+    }
+
+    case 'group':
+      return buildFieldsMeta(field.fields);
+
+    default:
+      return null;
+  }
+};
+
+/**
+ * Build field metadata object from an array of fields
+ */
+const buildFieldsMeta = (
+  fields: readonly Field[],
+): AiContextRepeatable | null => {
+  const result: AiContextRepeatable = {};
+
+  for (const field of fields) {
+    if (field.type === 'grid') {
+      const gridMeta = buildFieldsMeta(field.fields);
+      if (gridMeta != null) {
+        Object.assign(result, gridMeta);
+      }
+      continue;
+    }
+
+    if (field.type === 'group') {
+      const groupMeta = buildFieldsMeta(field.fields);
+      if (groupMeta != null) {
+        Object.assign(result, groupMeta);
+      }
+      continue;
+    }
+
+    if (field.type === 'repeatable') {
+      const meta = buildFieldMeta(field);
+      if (meta != null) {
+        result[field.id] = meta;
+      }
+      continue;
+    }
+
+    const meta = buildFieldMeta(field);
+    if (meta != null) {
+      result[field.id] = meta;
+    }
+  }
+
+  return Object.keys(result).length > 0 ? result : null;
+};
+
+/**
+ * Build AiContext from steps
+ */
+export const buildAiContext = (steps: Step[]): AiContext => {
+  const result: AiContext = {};
+
+  for (const step of steps) {
+    const stepContext: AiContextStep = {
+      _step: {
+        title: step.title,
+        description: step.description,
+      },
+    };
+
+    const fieldsMeta = buildFieldsMeta(step.fields);
+    if (fieldsMeta != null) {
+      Object.assign(stepContext, fieldsMeta);
+    }
+
+    result[step.name] = stepContext;
+  }
+
+  return result;
 };
