@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { createMiddleware } from 'hono/factory';
 import { streamSSE } from 'hono/streaming';
 
-import type { Config } from '../../definitions';
+import type { AiMode, Config } from '../../definitions';
 import { buildAiContext } from '../helpers/docs/transform';
 import {
   getDocumentsForScenario,
@@ -10,9 +10,32 @@ import {
   readDocument,
   saveDocument,
 } from '../repositories/document';
-import { generateDesignDocStream } from '../usecases/docs/generate-doc';
+import {
+  generateDesignDocStream,
+  generateMockDocStream,
+} from '../usecases/docs/generate-doc';
 
 import type { ScenarioInfoMapEntry } from './scenarios';
+
+/**
+ * Get the document generator based on AI mode
+ */
+function getDocGenerator(
+  aiMode: AiMode,
+  scenario: ScenarioInfoMapEntry['scenario'],
+  formData: Record<string, unknown>,
+  aiContext: ReturnType<typeof buildAiContext>,
+) {
+  if (aiMode === 'mock') {
+    return generateMockDocStream();
+  }
+
+  return generateDesignDocStream({
+    scenario,
+    formData,
+    aiContext,
+  });
+}
 
 type Variables = {
   scenarioInfo: ScenarioInfoMapEntry;
@@ -72,14 +95,32 @@ export const createDocsApp = (
     const formData = (await c.req.json()) as Record<string, unknown>;
     const aiContext = buildAiContext(scenario.steps);
 
+    const aiMode = config.ai ?? 'stream';
+    const generator = getDocGenerator(aiMode, scenario, formData, aiContext);
+
+    // Non-streaming mode: return JSON response directly
+    if (aiMode === 'sync') {
+      let fullContent = '';
+      for await (const chunk of generator) {
+        fullContent += chunk.text;
+      }
+
+      if (scenario.hooks?.onPreview != null) {
+        await scenario.hooks.onPreview({
+          formData,
+          aiContext,
+          content: fullContent,
+        });
+      }
+
+      return c.json({ content: fullContent });
+    }
+
+    // Streaming mode: return SSE response
     return streamSSE(c, async (stream) => {
       let fullContent = '';
 
-      for await (const chunk of generateDesignDocStream({
-        scenario,
-        formData,
-        aiContext,
-      })) {
+      for await (const chunk of generator) {
         fullContent += chunk.text;
         await stream.writeSSE({
           data: JSON.stringify({ type: 'text_delta', text: chunk.text }),
