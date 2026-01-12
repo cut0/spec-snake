@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.9
+
+### Patch Changes
+
+- 45504fe: feat: add AiMode config for document generation
+
 ## 0.0.1-beta.8
 
 ### Patch Changes
