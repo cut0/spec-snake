@@ -99,6 +99,7 @@ const steps = [
       {
         type: 'repeatable',
         id: 'items',
+        label: 'Libraries',
         minCount: 1,
         field: {
           type: 'group',
@@ -152,6 +153,7 @@ const steps = [
       {
         type: 'repeatable',
         id: 'items',
+        label: 'Modules',
         field: {
           type: 'group',
           fields: [
@@ -175,6 +177,7 @@ const steps = [
             {
               type: 'repeatable',
               id: 'features',
+              label: 'Features',
               minCount: 1,
               field: {
                 type: 'group',

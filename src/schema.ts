@@ -130,6 +130,7 @@ export const RepeatableLayoutSchema: v.GenericSchema<RepeatableLayout> =
   v.object({
     type: v.literal('repeatable'),
     id: v.string(),
+    label: v.string(),
     minCount: v.optional(v.number()),
     defaultCount: v.optional(v.number()),
     field: v.union([FormFieldSchema, GroupLayoutSchema]),

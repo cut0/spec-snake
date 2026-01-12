@@ -99,6 +99,7 @@ const steps = [
       {
         type: 'repeatable',
         id: 'items',
+        label: 'ライブラリ一覧',
         minCount: 1,
         field: {
           type: 'group',
@@ -152,6 +153,7 @@ const steps = [
       {
         type: 'repeatable',
         id: 'items',
+        label: 'モジュール一覧',
         field: {
           type: 'group',
           fields: [
@@ -175,6 +177,7 @@ const steps = [
             {
               type: 'repeatable',
               id: 'features',
+              label: '機能一覧',
               minCount: 1,
               field: {
                 type: 'group',
