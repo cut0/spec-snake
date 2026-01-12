@@ -120,7 +120,17 @@ export const getVisibleFieldIds = (
 };
 
 /**
- * Build default values for fields, respecting minCount for nested repeatables
+ * Get the default value for a form field
+ */
+const getFieldDefaultValue = (field: FormField): unknown => {
+  if (field.default != null) {
+    return field.default;
+  }
+  return field.type === 'checkbox' ? false : '';
+};
+
+/**
+ * Build default values for fields, respecting minCount/defaultCount for nested repeatables
  */
 export const buildFieldDefaults = (
   fields: Field[],
@@ -132,20 +142,21 @@ export const buildFieldDefaults = (
     } else if (field.type === 'group') {
       Object.assign(defaults, buildFieldDefaults(field.fields));
     } else if (field.type === 'repeatable') {
-      const minCount = field.minCount ?? 0;
+      // Use defaultCount if specified, otherwise fall back to minCount
+      const count = field.defaultCount ?? field.minCount ?? 0;
       if (field.field.type === 'group') {
         const groupFields = field.field.fields;
-        defaults[field.id] = Array.from({ length: minCount }, () =>
+        defaults[field.id] = Array.from({ length: count }, () =>
           buildFieldDefaults(groupFields),
         );
       } else {
         const singleField = field.field as FormField;
-        defaults[field.id] = Array.from({ length: minCount }, () => ({
-          [singleField.id]: singleField.type === 'checkbox' ? false : '',
+        defaults[field.id] = Array.from({ length: count }, () => ({
+          [singleField.id]: getFieldDefaultValue(singleField),
         }));
       }
     } else if (!isLayoutField(field)) {
-      defaults[field.id] = field.type === 'checkbox' ? false : '';
+      defaults[field.id] = getFieldDefaultValue(field);
     }
   }
   return defaults;
