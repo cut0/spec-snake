@@ -327,6 +327,7 @@ export type GroupLayout = {
  * const tagsLayout: RepeatableLayout = {
  *   type: 'repeatable',
  *   id: 'tags',
+ *   label: 'Tags',
  *   minCount: 1,
  *   field: { id: 'name', type: 'input', label: 'Tag', description: '' }
  * };
@@ -336,6 +337,7 @@ export type GroupLayout = {
  * const librariesLayout: RepeatableLayout = {
  *   type: 'repeatable',
  *   id: 'libraries',
+ *   label: 'Libraries',
  *   minCount: 1,
  *   field: {
  *     type: 'group',
@@ -353,6 +355,8 @@ export type RepeatableLayout = {
   type: 'repeatable';
   /** Unique identifier (used as key in form data) */
   id: string;
+  /** Display label shown above the repeatable field */
+  label: string;
   /** Minimum number of entries required (default: 0) */
   minCount?: number;
   /** Default number of entries to create initially (defaults to minCount if not specified) */
