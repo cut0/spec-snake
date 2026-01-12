@@ -2,6 +2,7 @@ import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion } from 'motion/react';
 import type { FC } from 'react';
 
+import type { Step } from '../../../../../definitions';
 import { CloseIcon } from '../../../../components/Icons';
 import { PreviewContent } from '../PreviewContent';
 
@@ -9,11 +10,11 @@ type PreviewDialogProps = {
   isOpen: boolean;
   onClose: () => void;
   previewContent: string | null;
-  previewMode: 'edit' | 'preview';
   isGenerating: boolean;
   isSubmitting: boolean;
   allowSave: boolean;
-  onToggleMode: () => void;
+  steps?: Step[];
+  formData?: Record<string, unknown>;
   onPreview: () => void;
   onCreate: () => void;
   onContentChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -23,11 +24,11 @@ export const PreviewDialog: FC<PreviewDialogProps> = ({
   isOpen,
   onClose,
   previewContent,
-  previewMode,
   isGenerating,
   isSubmitting,
   allowSave,
-  onToggleMode,
+  steps,
+  formData,
   onPreview,
   onCreate,
   onContentChange,
@@ -57,14 +58,14 @@ export const PreviewDialog: FC<PreviewDialogProps> = ({
           </div>
           <PreviewContent
             allowSave={allowSave}
+            formData={formData}
             isGenerating={isGenerating}
             isSubmitting={isSubmitting}
             previewContent={previewContent}
-            previewMode={previewMode}
+            steps={steps}
             onContentChange={onContentChange}
             onCreate={onCreate}
             onPreview={onPreview}
-            onToggleMode={onToggleMode}
           />
         </motion.div>
       )}

@@ -8,6 +8,7 @@ import { PreviewDialog } from '../../../../../features/docs/components/PreviewDi
 import { usePreviewDocMutation } from '../../../../../features/docs/mutations/usePreviewDocMutation';
 import { useSubmitDocMutation } from '../../../../../features/docs/mutations/useSubmitDocMutation';
 import { useDocsStore } from '../../../../../features/docs/stores/useDocsStore';
+import { buildAiContext } from '../../../../../features/form/services';
 import { scenarioQueryOptions } from '../../../../../features/scenario/queries/fetchScenarioQueryOption';
 import { useSnackbar } from '../../../../../features/snackbar/stores/snackbar';
 import { MobileDrawer } from '../../../../../features/step/components/MobileDrawer';
@@ -47,7 +48,6 @@ export const NewDocPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAsideCollapsed, setIsAsideCollapsed] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('preview');
 
   // Handlers
   const handleSubmit = useCallback(() => {
@@ -64,8 +64,17 @@ export const NewDocPage = () => {
       scenarioId,
       content: previewContent,
       formData: formValues,
+      aiContext: buildAiContext(steps),
     });
-  }, [submitMutation, previewContent, scenarioId, formValues, showSnackbar, t]);
+  }, [
+    submitMutation,
+    previewContent,
+    scenarioId,
+    formValues,
+    steps,
+    showSnackbar,
+    t,
+  ]);
 
   const handlePreview = useCallback(() => {
     if (previewMutation.isPending) {
@@ -102,7 +111,11 @@ export const NewDocPage = () => {
       );
     }
 
-    previewMutation.mutate({ scenarioId, formData: filteredFormData });
+    previewMutation.mutate({
+      scenarioId,
+      formData: filteredFormData,
+      aiContext: buildAiContext(steps),
+    });
   }, [
     previewMutation,
     steps,
@@ -113,10 +126,6 @@ export const NewDocPage = () => {
     showSnackbar,
     t,
   ]);
-
-  const onToggleMode = useCallback(() => {
-    setPreviewMode((prev) => (prev === 'edit' ? 'preview' : 'edit'));
-  }, []);
 
   const onContentChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -214,14 +223,14 @@ export const NewDocPage = () => {
       <aside className="hidden lg:flex row-span-2 min-w-0 bg-white rounded-2xl border border-gray-100 flex-col overflow-hidden sticky top-8 h-[calc(100vh-64px)] self-start">
         <PreviewContent
           allowSave={permissions.allowSave}
+          formData={formValues}
           isGenerating={previewMutation.isPending}
           isSubmitting={submitMutation.isPending}
           previewContent={previewContent}
-          previewMode={previewMode}
+          steps={steps}
           onContentChange={onContentChange}
           onCreate={handleSubmit}
           onPreview={handlePreview}
-          onToggleMode={onToggleMode}
         />
       </aside>
 
@@ -253,16 +262,16 @@ export const NewDocPage = () => {
 
       <PreviewDialog
         allowSave={permissions.allowSave}
+        formData={formValues}
         isGenerating={previewMutation.isPending}
         isOpen={isDialogOpen}
         isSubmitting={submitMutation.isPending}
         previewContent={previewContent}
-        previewMode={previewMode}
+        steps={steps}
         onClose={onCloseDialog}
         onContentChange={onContentChange}
         onCreate={handleSubmit}
         onPreview={handlePreview}
-        onToggleMode={onToggleMode}
       />
     </div>
   );

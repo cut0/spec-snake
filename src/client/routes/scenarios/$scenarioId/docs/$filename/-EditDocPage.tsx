@@ -8,6 +8,7 @@ import { PreviewDialog } from '../../../../../features/docs/components/PreviewDi
 import { usePreviewDocMutation } from '../../../../../features/docs/mutations/usePreviewDocMutation';
 import { useUpdateDocMutation } from '../../../../../features/docs/mutations/useUpdateDocMutation';
 import { useDocsStore } from '../../../../../features/docs/stores/useDocsStore';
+import { buildAiContext } from '../../../../../features/form/services';
 import { scenarioQueryOptions } from '../../../../../features/scenario/queries/fetchScenarioQueryOption';
 import { useSnackbar } from '../../../../../features/snackbar/stores/snackbar';
 import { MobileDrawer } from '../../../../../features/step/components/MobileDrawer';
@@ -50,7 +51,6 @@ export const EditDocPage = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAsideCollapsed, setIsAsideCollapsed] = useState(false);
-  const [previewMode, setPreviewMode] = useState<'edit' | 'preview'>('preview');
 
   // Handlers
   const handleUpdate = useCallback(() => {
@@ -68,6 +68,7 @@ export const EditDocPage = () => {
       filename,
       content: previewContent,
       formData: formValues,
+      aiContext: buildAiContext(steps),
     });
   }, [
     updateMutation,
@@ -75,6 +76,7 @@ export const EditDocPage = () => {
     scenarioId,
     filename,
     formValues,
+    steps,
     showSnackbar,
     t,
   ]);
@@ -114,7 +116,11 @@ export const EditDocPage = () => {
       );
     }
 
-    previewMutation.mutate({ scenarioId, formData: filteredFormData });
+    previewMutation.mutate({
+      scenarioId,
+      formData: filteredFormData,
+      aiContext: buildAiContext(steps),
+    });
   }, [
     previewMutation,
     steps,
@@ -125,10 +131,6 @@ export const EditDocPage = () => {
     showSnackbar,
     t,
   ]);
-
-  const onToggleMode = useCallback(() => {
-    setPreviewMode((prev) => (prev === 'edit' ? 'preview' : 'edit'));
-  }, []);
 
   const onContentChange = useCallback(
     (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -226,14 +228,14 @@ export const EditDocPage = () => {
       <aside className="hidden lg:flex row-span-2 min-w-0 bg-white rounded-2xl border border-gray-100 flex-col overflow-hidden sticky top-8 h-[calc(100vh-64px)] self-start">
         <PreviewContent
           allowSave={permissions.allowSave}
+          formData={formValues}
           isGenerating={previewMutation.isPending}
           isSubmitting={updateMutation.isPending}
           previewContent={previewContent}
-          previewMode={previewMode}
+          steps={steps}
           onContentChange={onContentChange}
           onCreate={handleUpdate}
           onPreview={handlePreview}
-          onToggleMode={onToggleMode}
         />
       </aside>
 
@@ -265,16 +267,16 @@ export const EditDocPage = () => {
 
       <PreviewDialog
         allowSave={permissions.allowSave}
+        formData={formValues}
         isGenerating={previewMutation.isPending}
         isOpen={isDialogOpen}
         isSubmitting={updateMutation.isPending}
         previewContent={previewContent}
-        previewMode={previewMode}
+        steps={steps}
         onClose={onCloseDialog}
         onContentChange={onContentChange}
         onCreate={handleUpdate}
         onPreview={handlePreview}
-        onToggleMode={onToggleMode}
       />
     </div>
   );

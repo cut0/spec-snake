@@ -2,8 +2,7 @@ import { Hono } from 'hono';
 import { createMiddleware } from 'hono/factory';
 import { streamSSE } from 'hono/streaming';
 
-import type { AiMode, Config } from '../../definitions';
-import { buildAiContext } from '../helpers/docs/transform';
+import type { AiContext, AiMode, Config } from '../../definitions';
 import {
   getDocumentsForScenario,
   getFilename,
@@ -24,7 +23,7 @@ function getDocGenerator(
   aiMode: AiMode,
   scenario: ScenarioInfoMapEntry['scenario'],
   formData: Record<string, unknown>,
-  aiContext: ReturnType<typeof buildAiContext>,
+  aiContext: AiContext,
 ) {
   if (aiMode === 'mock') {
     return generateMockDocStream();
@@ -41,14 +40,21 @@ type Variables = {
   scenarioInfo: ScenarioInfoMapEntry;
 };
 
+type PreviewDocBody = {
+  formData: Record<string, unknown>;
+  aiContext: AiContext;
+};
+
 type CreateDocBody = {
   content: string;
   formData: Record<string, unknown>;
+  aiContext: AiContext;
 };
 
 type UpdateDocBody = {
   content: string;
   formData: Record<string, unknown>;
+  aiContext: AiContext;
 };
 
 const createScenarioMiddleware = (
@@ -92,8 +98,7 @@ export const createDocsApp = (
   app.post('/api/scenarios/:scenarioId/docs/preview', async (c) => {
     const { scenario } = c.get('scenarioInfo');
 
-    const formData = (await c.req.json()) as Record<string, unknown>;
-    const aiContext = buildAiContext(scenario.steps);
+    const { formData, aiContext } = (await c.req.json()) as PreviewDocBody;
 
     const aiMode = config.ai ?? 'stream';
     const generator = getDocGenerator(aiMode, scenario, formData, aiContext);
@@ -151,8 +156,8 @@ export const createDocsApp = (
       return c.json({ error: 'Save is not allowed' }, 403);
     }
 
-    const { content, formData } = (await c.req.json()) as CreateDocBody;
-    const aiContext = buildAiContext(scenario.steps);
+    const { content, formData, aiContext } =
+      (await c.req.json()) as CreateDocBody;
     const filename = getFilename(
       scenario,
       scenarioId,
@@ -203,8 +208,8 @@ export const createDocsApp = (
       return c.json({ error: 'Save is not allowed' }, 403);
     }
 
-    const { content, formData } = (await c.req.json()) as UpdateDocBody;
-    const aiContext = buildAiContext(scenario.steps);
+    const { content, formData, aiContext } =
+      (await c.req.json()) as UpdateDocBody;
     const { outputPath } = await saveDocument({
       scenario,
       scenarioId,

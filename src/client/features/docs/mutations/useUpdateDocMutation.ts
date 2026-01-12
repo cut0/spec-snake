@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMutation } from '@tanstack/react-query';
 
+import type { AiContext } from '../../../../definitions';
 import { queryClient } from '../../../query';
 import { useSnackbar } from '../../snackbar/stores/snackbar';
 import { docsQueryOptions } from '../queries/fetchDocsQueryOption';
@@ -10,6 +11,7 @@ type UpdateDocInput = {
   filename: string;
   content: string;
   formData: Record<string, unknown>;
+  aiContext: AiContext;
 };
 
 const updateDoc = async (input: UpdateDocInput): Promise<void> => {
@@ -21,6 +23,7 @@ const updateDoc = async (input: UpdateDocInput): Promise<void> => {
       body: JSON.stringify({
         content: input.content,
         formData: input.formData,
+        aiContext: input.aiContext,
       }),
     },
   );
