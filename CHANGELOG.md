@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.12
+
+### Patch Changes
+
+- 216fa99: feat: redesign PreviewContent UI and move buildAiContext to client
+
 ## 0.0.1-beta.11
 
 ### Patch Changes
