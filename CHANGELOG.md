@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.10
+
+### Patch Changes
+
+- 4d4b329: feat: show field label in repeatable add button
+
 ## 0.0.1-beta.9
 
 ### Patch Changes
