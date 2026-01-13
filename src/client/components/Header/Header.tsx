@@ -3,7 +3,7 @@ import { Link } from '@tanstack/react-router';
 import type { FC } from 'react';
 
 import { getCurrentLocale } from '../../i18n';
-import { CloseIcon, EyeIcon, MenuIcon } from '../Icons';
+import { CloseIcon, EyeIcon, GitHubIcon, MenuIcon } from '../Icons';
 import { LanguageSwitcher } from '../LanguageSwitcher';
 
 type HeaderProps = {
@@ -53,6 +53,23 @@ export const Header: FC<HeaderProps> = ({
             <EyeIcon />
           </button>
         )}
+        <div className="relative">
+          <a
+            href="https://github.com/cut0/spec-snake"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="GitHub"
+            className="p-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors *:size-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300 focus-visible:ring-offset-2 block"
+          >
+            <GitHubIcon />
+          </a>
+          <div className="absolute top-full right-1/2 translate-x-1/2 mt-1 whitespace-nowrap">
+            <div className="relative bg-gray-800 text-white text-xs px-2 py-1 rounded-md">
+              <div className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-gray-800 rotate-45" />
+              {t`Send feedback!`}
+            </div>
+          </div>
+        </div>
       </div>
     </header>
   );

@@ -192,6 +192,10 @@ msgstr "シナリオ一覧"
 msgid "Select Document to Edit"
 msgstr "編集するドキュメントを選択"
 
+#: src/client/components/Header/Header.tsx:69
+msgid "Send feedback!"
+msgstr "要望を送ってね！"
+
 #: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:120
 msgid "Share"
 msgstr "シェア"
