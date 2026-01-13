@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.14
+
+### Patch Changes
+
+- 200ee81: feat: add GitHub link to header
+
 ## 0.0.1-beta.13
 
 ### Patch Changes
