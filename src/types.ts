@@ -42,10 +42,9 @@ export type SelectOption = {
 // =============================================================================
 
 /**
- * Declarative condition for field visibility
+ * Single field condition for visibility
  *
- * Use this for simple conditions like "show when field X equals Y".
- * For complex conditions, use a function instead.
+ * The `field` property supports dot notation for nested paths (e.g., 'overview.priority').
  *
  * @example
  * ```ts
@@ -63,44 +62,113 @@ export type SelectOption = {
  *
  * // Show when field is not empty
  * when: { field: 'title', isNotEmpty: true }
+ *
+ * // Cross-section reference using dot notation
+ * when: { field: 'overview.priority', is: 'high' }
  * ```
  */
-export type FieldConditionObject =
+export type FieldConditionSingle =
   | { field: string; is: string | boolean | (string | boolean)[] }
   | { field: string; isNot: string | boolean | (string | boolean)[] }
   | { field: string; isEmpty: true }
   | { field: string; isNotEmpty: true };
 
 /**
- * Function-based condition for complex visibility logic
+ * Composite condition using AND logic
  *
- * Receives the current form data and returns whether the field should be visible.
- * Use this when you need to reference multiple fields or complex logic.
+ * All conditions must be true for the field to be visible.
  *
  * @example
  * ```ts
- * // Complex condition with multiple fields
- * when: (formData) =>
- *   formData.priority === 'high' && formData.type === 'feature'
- *
- * // Cross-section reference
- * when: (formData) =>
- *   formData.overview?.includeDeadline === true
+ * // Show when priority is 'high' AND type is 'feature'
+ * when: {
+ *   and: [
+ *     { field: 'priority', is: 'high' },
+ *     { field: 'type', is: 'feature' }
+ *   ]
+ * }
  * ```
  */
-export type FieldConditionFunction<
-  TFormData extends Record<string, unknown> = Record<string, unknown>,
-> = (formData: TFormData) => boolean;
+export type FieldConditionAnd = {
+  and: FieldConditionObject[];
+};
 
 /**
- * Field visibility condition (hybrid: object or function)
+ * Composite condition using OR logic
  *
- * - Use object form for simple conditions (recommended for most cases)
- * - Use function form for complex conditions
+ * At least one condition must be true for the field to be visible.
+ *
+ * @example
+ * ```ts
+ * // Show when priority is 'high' OR type is 'urgent'
+ * when: {
+ *   or: [
+ *     { field: 'priority', is: 'high' },
+ *     { field: 'type', is: 'urgent' }
+ *   ]
+ * }
+ * ```
  */
-export type FieldCondition<
-  TFormData extends Record<string, unknown> = Record<string, unknown>,
-> = FieldConditionObject | FieldConditionFunction<TFormData>;
+export type FieldConditionOr = {
+  or: FieldConditionObject[];
+};
+
+/**
+ * Declarative condition for field visibility
+ *
+ * Supports single field conditions, AND/OR composite conditions,
+ * and dot notation for cross-section field references.
+ *
+ * @example
+ * ```ts
+ * // Simple condition
+ * when: { field: 'priority', is: 'high' }
+ *
+ * // AND condition
+ * when: {
+ *   and: [
+ *     { field: 'priority', is: 'high' },
+ *     { field: 'type', is: 'feature' }
+ *   ]
+ * }
+ *
+ * // OR condition
+ * when: {
+ *   or: [
+ *     { field: 'priority', is: 'high' },
+ *     { field: 'overview.urgent', is: true }
+ *   ]
+ * }
+ *
+ * // Nested AND/OR
+ * when: {
+ *   or: [
+ *     { field: 'priority', is: 'high' },
+ *     {
+ *       and: [
+ *         { field: 'type', is: 'feature' },
+ *         { field: 'status', is: 'approved' }
+ *       ]
+ *     }
+ *   ]
+ * }
+ * ```
+ */
+export type FieldConditionObject =
+  | FieldConditionSingle
+  | FieldConditionAnd
+  | FieldConditionOr;
+
+/**
+ * Field visibility condition (object-based only)
+ *
+ * Use declarative object conditions for field visibility.
+ * Supports single conditions, AND/OR logic, and dot notation for nested fields.
+ *
+ * Note: Function-based conditions are not supported as they cannot be
+ * serialized when sending scenario data from server to client.
+ */
+export type FieldCondition = FieldConditionObject;
 
 /**
  * Text input field configuration

@@ -312,13 +312,13 @@ Groups fields together visually (no repetition). To repeat a group, wrap it in a
 
 Fields can be conditionally shown/hidden based on other field values using the `when` property.
 
-#### Object-based conditions (recommended for simple cases)
+#### Single field conditions
 
 ```typescript
 // Show when priority is 'high'
 { type: 'input', id: 'deadline', label: 'Deadline', when: { field: 'priority', is: 'high' } }
 
-// Show when priority is 'high' or 'medium'
+// Show when priority is 'high' or 'medium' (array match)
 { type: 'textarea', id: 'risk', label: 'Risk', when: { field: 'priority', is: ['high', 'medium'] } }
 
 // Show when priority is NOT 'low'
@@ -334,19 +334,62 @@ Fields can be conditionally shown/hidden based on other field values using the `
 { type: 'input', id: 'fallback', label: 'Fallback', when: { field: 'title', isEmpty: true } }
 ```
 
-#### Function-based conditions (for complex logic)
+#### AND / OR conditions
 
 ```typescript
-// Complex condition with multiple fields
+// AND condition: Show when priority is 'high' AND title is not empty
 {
   type: 'textarea',
-  id: 'details',
-  label: 'Details',
-  when: (formData) => formData.priority === 'high' && formData.type === 'feature'
+  id: 'stakeholders',
+  label: 'Stakeholders',
+  when: {
+    and: [
+      { field: 'priority', is: 'high' },
+      { field: 'title', isNotEmpty: true }
+    ]
+  }
+}
+
+// OR condition: Show when priority is 'high' OR description is not empty
+{
+  type: 'input',
+  id: 'review_date',
+  label: 'Review Date',
+  when: {
+    or: [
+      { field: 'priority', is: 'high' },
+      { field: 'description', isNotEmpty: true }
+    ]
+  }
+}
+
+// Nested AND/OR: Show when priority is 'high' OR (priority is 'medium' AND deadline is set)
+{
+  type: 'textarea',
+  id: 'escalation_plan',
+  label: 'Escalation Plan',
+  when: {
+    or: [
+      { field: 'priority', is: 'high' },
+      {
+        and: [
+          { field: 'priority', is: 'medium' },
+          { field: 'deadline', isNotEmpty: true }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-**Note**: Hidden fields are automatically excluded from validation and form submission.
+#### Cross-section field references (dot notation)
+
+```typescript
+// Reference fields from other steps using dot notation
+{ type: 'input', id: 'design_link', label: 'Design', when: { field: 'overview.priority', is: 'high' } }
+```
+
+**Note**: Hidden fields are automatically excluded from validation and form submission. Function-based conditions are not supported (conditions must be JSON-serializable).
 
 ### `AiSettings` - Claude Agent SDK settings
 

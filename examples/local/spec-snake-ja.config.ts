@@ -63,6 +63,58 @@ const steps = [
         rows: 3,
         when: { field: 'priority', is: ['high', 'medium'] },
       },
+      // AND 条件の例: 優先度が「高」かつタイトルが入力されている場合に表示
+      {
+        type: 'textarea',
+        id: 'stakeholders',
+        label: 'ステークホルダー',
+        description: '関係者と承認者のリスト',
+        placeholder: '関係者を記述...',
+        rows: 2,
+        when: {
+          and: [
+            { field: 'priority', is: 'high' },
+            { field: 'title', isNotEmpty: true },
+          ],
+        },
+      },
+      // OR 条件の例: 優先度が「高」または説明が入力されている場合に表示
+      {
+        type: 'input',
+        id: 'review_date',
+        label: 'レビュー予定日',
+        description: 'レビュー予定日',
+        placeholder: 'YYYY-MM-DD',
+        inputType: 'date',
+        when: {
+          or: [
+            { field: 'priority', is: 'high' },
+            { field: 'description', isNotEmpty: true },
+          ],
+        },
+      },
+      // ネストした AND/OR の例: 複雑な条件
+      {
+        type: 'textarea',
+        id: 'escalation_plan',
+        label: 'エスカレーション計画',
+        description: '問題発生時のエスカレーション手順',
+        placeholder: 'エスカレーション手順を記述...',
+        rows: 3,
+        when: {
+          or: [
+            // 優先度が「高」の場合
+            { field: 'priority', is: 'high' },
+            // または、優先度が「中」かつ締め切りが設定されている場合
+            {
+              and: [
+                { field: 'priority', is: 'medium' },
+                { field: 'deadline', isNotEmpty: true },
+              ],
+            },
+          ],
+        },
+      },
     ],
   },
   {
@@ -129,6 +181,8 @@ const steps = [
               placeholder: 'https://...',
               inputType: 'url',
               required: true,
+              // 例: name フィールドが空でない場合に表示
+              when: { field: 'name', isNotEmpty: true },
             },
             {
               type: 'textarea',
