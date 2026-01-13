@@ -9,6 +9,7 @@ export * from './ChevronRightIcon';
 export * from './CheckIcon';
 export * from './CheckIconSmall';
 export * from './ExclamationIcon';
+export * from './GitHubIcon';
 export * from './CloseIcon';
 export * from './PencilIcon';
 export * from './EyeIcon';

@@ -192,6 +192,10 @@ msgstr "Scenario List"
 msgid "Select Document to Edit"
 msgstr "Select Document to Edit"
 
+#: src/client/components/Header/Header.tsx:69
+msgid "Send feedback!"
+msgstr "Send feedback!"
+
 #: src/client/features/docs/components/PreviewContent/PreviewContent.tsx:120
 msgid "Share"
 msgstr "Share"
