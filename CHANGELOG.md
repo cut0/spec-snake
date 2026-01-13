@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.13
+
+### Patch Changes
+
+- 4b7e44b: feat: add and/or condition syntax support for when property
+
 ## 0.0.1-beta.12
 
 ### Patch Changes
