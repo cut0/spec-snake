@@ -1,5 +1,11 @@
 # spec-snake
 
+## 0.0.1-beta.15
+
+### Patch Changes
+
+- 40c9aff: feat: add dismiss button to GitHub tooltip
+
 ## 0.0.1-beta.14
 
 ### Patch Changes
