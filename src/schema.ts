@@ -1,6 +1,7 @@
 import * as v from 'valibot';
 import type {
   Field,
+  FieldConditionObject,
   GridLayout,
   GroupLayout,
   LayoutField,
@@ -27,7 +28,8 @@ export const isLayoutField = (field: Field): field is LayoutField => {
 // Field Condition Schema
 // =============================================================================
 
-const FieldConditionObjectSchema = v.union([
+// Single field condition (supports dot notation for nested paths)
+const FieldConditionSingleSchema = v.union([
   v.object({
     field: v.string(),
     is: v.union([
@@ -54,13 +56,16 @@ const FieldConditionObjectSchema = v.union([
   }),
 ]);
 
-// Allow both object and function forms
-const FieldConditionSchema = v.union([
-  FieldConditionObjectSchema,
-  v.custom<(formData: Record<string, unknown>) => boolean>(
-    (value) => typeof value === 'function',
-  ),
-]);
+// Full condition schema with and/or support (recursive)
+const FieldConditionSchema: v.GenericSchema<FieldConditionObject> = v.union([
+  FieldConditionSingleSchema,
+  v.object({
+    and: v.array(v.lazy(() => FieldConditionSchema)),
+  }),
+  v.object({
+    or: v.array(v.lazy(() => FieldConditionSchema)),
+  }),
+]) as v.GenericSchema<FieldConditionObject>;
 
 const FieldBaseSchema = v.object({
   id: v.string(),

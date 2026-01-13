@@ -5,19 +5,60 @@ import {
   type AiContextStep,
   type Field,
   type FieldConditionObject,
+  type FieldConditionSingle,
   type FormField,
   type Step,
   isLayoutField,
 } from '../../../definitions';
 
 /**
- * Evaluate a field condition against the current form data
+ * Get a value from an object using dot notation path
+ *
+ * @example
+ * getValueByPath({ a: { b: 'value' } }, 'a.b') // returns 'value'
+ * getValueByPath({ a: 'value' }, 'a') // returns 'value'
  */
-export const evaluateCondition = (
+const getValueByPath = (
+  obj: Record<string, unknown>,
+  path: string,
+): unknown => {
+  return path.split('.').reduce<unknown>((acc, key) => {
+    if (acc == null || typeof acc !== 'object') return undefined;
+    return (acc as Record<string, unknown>)[key];
+  }, obj);
+};
+
+/**
+ * Check if condition is a single field condition (has 'field' property)
+ */
+const isSingleCondition = (
   condition: FieldConditionObject,
-  formData: Record<string, unknown>,
+): condition is FieldConditionSingle => {
+  return 'field' in condition;
+};
+
+/**
+ * Evaluate a single field condition
+ */
+const evaluateSingleCondition = (
+  condition: FieldConditionSingle,
+  itemData: Record<string, unknown>,
+  rootFormData: Record<string, unknown>,
 ): boolean => {
-  const fieldValue = formData[condition.field];
+  // Use dot notation to get value - try root first for cross-section, then item data
+  const fieldPath = condition.field;
+  let fieldValue: unknown;
+
+  if (fieldPath.includes('.')) {
+    // Dot notation path - use root form data for cross-section access
+    fieldValue = getValueByPath(rootFormData, fieldPath);
+  } else {
+    // Simple field name - use item data first, fallback to root
+    fieldValue =
+      itemData[fieldPath] !== undefined
+        ? itemData[fieldPath]
+        : getValueByPath(rootFormData, fieldPath);
+  }
 
   if ('is' in condition) {
     const expected = condition.is;
@@ -47,20 +88,57 @@ export const evaluateCondition = (
 };
 
 /**
+ * Evaluate a field condition against the current form data
+ *
+ * Supports:
+ * - Single field conditions: { field: 'x', is: 'y' }
+ * - AND conditions: { and: [...] }
+ * - OR conditions: { or: [...] }
+ * - Dot notation for nested paths: { field: 'overview.priority', is: 'high' }
+ */
+export const evaluateCondition = (
+  condition: FieldConditionObject,
+  itemData: Record<string, unknown>,
+  rootFormData: Record<string, unknown>,
+): boolean => {
+  // Handle AND condition
+  if ('and' in condition) {
+    return condition.and.every((c) =>
+      evaluateCondition(c, itemData, rootFormData),
+    );
+  }
+
+  // Handle OR condition
+  if ('or' in condition) {
+    return condition.or.some((c) =>
+      evaluateCondition(c, itemData, rootFormData),
+    );
+  }
+
+  // Handle single field condition
+  if (isSingleCondition(condition)) {
+    return evaluateSingleCondition(condition, itemData, rootFormData);
+  }
+
+  return true;
+};
+
+/**
  * Check if a field is visible based on its `when` condition
+ *
+ * @param field - The field to check visibility for
+ * @param itemData - The immediate context data (item-level for repeatables, or form data for top-level)
+ * @param rootFormData - The root form data (for cross-section access via dot notation)
  */
 export const isFieldVisible = (
   field: FormField,
-  formData: Record<string, unknown>,
+  itemData: Record<string, unknown>,
+  rootFormData?: Record<string, unknown>,
 ): boolean => {
   const condition = field.when;
   if (condition == null) return true;
 
-  if (typeof condition === 'function') {
-    return condition(formData);
-  }
-
-  return evaluateCondition(condition, formData);
+  return evaluateCondition(condition, itemData, rootFormData ?? itemData);
 };
 
 /**

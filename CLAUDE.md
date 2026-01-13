@@ -105,9 +105,14 @@ pnpm release                        # Changesets publish
 
 **Conditional Field Display** (`when` property):
 
-- Object form: `{ field: 'priority', is: 'high' }`, `{ field: 'priority', isNot: 'low' }`, `{ field: 'title', isEmpty: true }`, `{ field: 'title', isNotEmpty: true }`
-- Function form: `(formData) => formData.priority === 'high' && formData.type === 'feature'`
+- Single condition: `{ field: 'priority', is: 'high' }`, `{ field: 'priority', isNot: 'low' }`, `{ field: 'title', isEmpty: true }`, `{ field: 'title', isNotEmpty: true }`
+- Array match: `{ field: 'priority', is: ['high', 'medium'] }` (matches any value in array)
+- AND condition: `{ and: [{ field: 'priority', is: 'high' }, { field: 'title', isNotEmpty: true }] }`
+- OR condition: `{ or: [{ field: 'priority', is: 'high' }, { field: 'description', isNotEmpty: true }] }`
+- Nested AND/OR: `{ or: [{ field: 'priority', is: 'high' }, { and: [{ field: 'priority', is: 'medium' }, { field: 'deadline', isNotEmpty: true }] }] }`
+- Dot notation for cross-section: `{ field: 'overview.priority', is: 'high' }`
 - Hidden fields are excluded from validation and form submission
+- Note: Function-based conditions are NOT supported (cannot be serialized to JSON)
 
 **Step Structure**:
 

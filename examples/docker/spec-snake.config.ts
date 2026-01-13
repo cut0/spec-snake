@@ -63,6 +63,36 @@ const steps = [
         rows: 3,
         when: { field: 'priority', is: ['high', 'medium'] },
       },
+      // AND condition example: shown when priority is 'high' AND title is not empty
+      {
+        type: 'textarea',
+        id: 'stakeholders',
+        label: 'Stakeholders',
+        description: 'List of stakeholders and approvers',
+        placeholder: 'List stakeholders...',
+        rows: 2,
+        when: {
+          and: [
+            { field: 'priority', is: 'high' },
+            { field: 'title', isNotEmpty: true },
+          ],
+        },
+      },
+      // OR condition example: shown when priority is 'high' OR description is not empty
+      {
+        type: 'input',
+        id: 'review_date',
+        label: 'Review Date',
+        description: 'Scheduled review date',
+        placeholder: 'YYYY-MM-DD',
+        inputType: 'date',
+        when: {
+          or: [
+            { field: 'priority', is: 'high' },
+            { field: 'description', isNotEmpty: true },
+          ],
+        },
+      },
     ],
   },
   {

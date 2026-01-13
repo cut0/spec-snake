@@ -41,7 +41,7 @@ export const FieldRenderer: FC<FieldRendererProps> = ({
     field.type === 'grid' ||
     field.type === 'repeatable' ||
     field.type === 'group' ||
-    isFieldVisible(field, itemData);
+    isFieldVisible(field, itemData, formData);
 
   if (!isVisible) {
     return null;

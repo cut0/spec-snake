@@ -315,13 +315,13 @@ export default defineConfig({
 
 `when` プロパティを使用して、他のフィールドの値に基づいてフィールドの表示/非表示を切り替えることができます。
 
-#### オブジェクト形式の条件（シンプルな場合に推奨）
+#### 単一フィールド条件
 
 ```typescript
 // priority が 'high' のときに表示
 { type: 'input', id: 'deadline', label: '期限', when: { field: 'priority', is: 'high' } }
 
-// priority が 'high' または 'medium' のときに表示
+// priority が 'high' または 'medium' のときに表示（配列マッチ）
 { type: 'textarea', id: 'risk', label: 'リスク', when: { field: 'priority', is: ['high', 'medium'] } }
 
 // priority が 'low' 以外のときに表示
@@ -337,19 +337,62 @@ export default defineConfig({
 { type: 'input', id: 'fallback', label: 'フォールバック', when: { field: 'title', isEmpty: true } }
 ```
 
-#### 関数形式の条件（複雑なロジック用）
+#### AND / OR 条件
 
 ```typescript
-// 複数のフィールドを参照する複雑な条件
+// AND 条件: priority が 'high' かつ title が空でないときに表示
 {
   type: 'textarea',
-  id: 'details',
-  label: '詳細',
-  when: (formData) => formData.priority === 'high' && formData.type === 'feature'
+  id: 'stakeholders',
+  label: 'ステークホルダー',
+  when: {
+    and: [
+      { field: 'priority', is: 'high' },
+      { field: 'title', isNotEmpty: true }
+    ]
+  }
+}
+
+// OR 条件: priority が 'high' または description が空でないときに表示
+{
+  type: 'input',
+  id: 'review_date',
+  label: 'レビュー予定日',
+  when: {
+    or: [
+      { field: 'priority', is: 'high' },
+      { field: 'description', isNotEmpty: true }
+    ]
+  }
+}
+
+// ネストした AND/OR: priority が 'high' または (priority が 'medium' かつ deadline が設定されている) ときに表示
+{
+  type: 'textarea',
+  id: 'escalation_plan',
+  label: 'エスカレーション計画',
+  when: {
+    or: [
+      { field: 'priority', is: 'high' },
+      {
+        and: [
+          { field: 'priority', is: 'medium' },
+          { field: 'deadline', isNotEmpty: true }
+        ]
+      }
+    ]
+  }
 }
 ```
 
-**注意**: 非表示のフィールドはバリデーションとフォーム送信から自動的に除外されます。
+#### クロスセクションフィールド参照（ドット記法）
+
+```typescript
+// ドット記法で他のステップのフィールドを参照
+{ type: 'input', id: 'design_link', label: 'デザイン', when: { field: 'overview.priority', is: 'high' } }
+```
+
+**注意**: 非表示のフィールドはバリデーションとフォーム送信から自動的に除外されます。関数形式の条件はサポートされていません（条件は JSON シリアライズ可能である必要があります）。
 
 ### `AiSettings` - Claude Agent SDK の設定オプション
 

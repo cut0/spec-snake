@@ -63,6 +63,58 @@ const steps = [
         rows: 3,
         when: { field: 'priority', is: ['high', 'medium'] },
       },
+      // AND condition example: shown when priority is 'high' AND title is not empty
+      {
+        type: 'textarea',
+        id: 'stakeholders',
+        label: 'Stakeholders',
+        description: 'List of stakeholders and approvers',
+        placeholder: 'List stakeholders...',
+        rows: 2,
+        when: {
+          and: [
+            { field: 'priority', is: 'high' },
+            { field: 'title', isNotEmpty: true },
+          ],
+        },
+      },
+      // OR condition example: shown when priority is 'high' OR description is not empty
+      {
+        type: 'input',
+        id: 'review_date',
+        label: 'Review Date',
+        description: 'Scheduled review date',
+        placeholder: 'YYYY-MM-DD',
+        inputType: 'date',
+        when: {
+          or: [
+            { field: 'priority', is: 'high' },
+            { field: 'description', isNotEmpty: true },
+          ],
+        },
+      },
+      // Nested AND/OR example: complex condition
+      {
+        type: 'textarea',
+        id: 'escalation_plan',
+        label: 'Escalation Plan',
+        description: 'Escalation procedure for issues',
+        placeholder: 'Describe escalation procedure...',
+        rows: 3,
+        when: {
+          or: [
+            // When priority is 'high'
+            { field: 'priority', is: 'high' },
+            // OR when priority is 'medium' AND deadline is set
+            {
+              and: [
+                { field: 'priority', is: 'medium' },
+                { field: 'deadline', isNotEmpty: true },
+              ],
+            },
+          ],
+        },
+      },
     ],
   },
   {
